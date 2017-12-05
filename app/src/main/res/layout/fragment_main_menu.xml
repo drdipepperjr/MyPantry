@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.karthikkribakaran.mypantry.MainMenu">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/my_groceries_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="My Groceries"/>
+        <Button
+            android:id="@+id/metrics_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Metrics"/>
+    </LinearLayout>
+
+</FrameLayout>

@@ -76,16 +76,16 @@ public class MainMenu extends Fragment {
             @Override
             public void onClick(View view) {
                 Fragment metricsMainMenu = new MetricsMainMenu();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(android.R.id.content, metricsMainMenu).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(android.R.id.content, metricsMainMenu).addToBackStack(null).commit();
             }
         });
 
         Button myGroceriesButton = getView().findViewById(R.id.my_groceries_button);
-        metricsButton.setOnClickListener(new View.OnClickListener() {
+        myGroceriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Fragment myGroceries = new MyGroceries();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(android.R.id.content, myGroceries).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(android.R.id.content, myGroceries).addToBackStack(null).commit();
             }
         });
     }

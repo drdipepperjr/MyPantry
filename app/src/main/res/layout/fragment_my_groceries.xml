@@ -22,7 +22,8 @@
         android:layout_gravity="end|bottom"
         android:clickable="true"
         android:focusable="true"
-        android:src="@android:drawable/stat_notify_more" />
+        android:src="@android:drawable/stat_notify_more"
+        app:fabSize="normal" />
 
 
 </FrameLayout>

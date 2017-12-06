@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Quantity"
-            android:inputType="numberSigned" />
+            android:inputType="number|numberSigned" />
 
         <EditText
             android:id="@+id/price"
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Expiration Date"
-            android:inputType="date" />
+            android:inputType="datetime|date" />
 
         <Button
             android:id="@+id/add"

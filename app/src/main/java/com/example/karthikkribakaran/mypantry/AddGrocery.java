@@ -107,6 +107,14 @@ public class AddGrocery extends Fragment {
             }
         });
 
+        Button finished = getView().findViewById(R.id.button3);
+        finished.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().popBackStackImmediate();
+            }
+        });
+
 
     }
 

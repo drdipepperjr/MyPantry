@@ -12,39 +12,36 @@
 
         <EditText
             android:id="@+id/title"
+            style="@style/Widget.AppCompat.EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Title"
-            tools:text="Title" />
+            android:hint="Title"
+            android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/quantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="numberSigned"
-            android:text="Quantity"
-            tools:text="Quantity" />
+            android:hint="Quantity"
+            android:inputType="numberSigned" />
 
         <EditText
             android:id="@+id/price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="numberSigned"
-            android:text="Price"
-            tools:text="price" />
+            android:hint="Price"
+            android:inputType="numberSigned" />
 
         <EditText
             android:id="@+id/expiration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="date"
-            android:text="Expiration Date"
-            tools:text="Expiration Date" />
+            android:hint="Expiration Date"
+            android:inputType="date" />
 
         <Button
             android:id="@+id/add"

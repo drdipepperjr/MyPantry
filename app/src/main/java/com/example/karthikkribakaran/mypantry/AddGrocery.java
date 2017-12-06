@@ -103,6 +103,10 @@ public class AddGrocery extends Fragment {
                 }
                 catch (Exception e){};
 
+                title.getText().clear();
+                price.getText().clear();
+                quantity.getText().clear();
+                expiration.getText().clear();
 
             }
         });

@@ -1,0 +1,63 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.karthikkribakaran.mypantry.AddGrocery">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Title"
+            tools:text="Title" />
+
+        <EditText
+            android:id="@+id/quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="numberSigned"
+            android:text="Quantity"
+            tools:text="Quantity" />
+
+        <EditText
+            android:id="@+id/price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="numberSigned"
+            android:text="Price"
+            tools:text="price" />
+
+        <EditText
+            android:id="@+id/expiration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:text="Expiration Date"
+            tools:text="Expiration Date" />
+
+        <Button
+            android:id="@+id/add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Another" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Finished" />
+
+    </LinearLayout>
+
+</FrameLayout>

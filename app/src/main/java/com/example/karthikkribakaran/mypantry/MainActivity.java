@@ -9,7 +9,8 @@ import android.support.v4.app.Fragment;
 public class MainActivity extends AppCompatActivity
         implements MainMenu.OnFragmentInteractionListener,
                     MetricsMainMenu.OnFragmentInteractionListener,
-                    MyGroceries.OnFragmentInteractionListener {
+                    MyGroceries.OnFragmentInteractionListener,
+                    AddGrocery.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

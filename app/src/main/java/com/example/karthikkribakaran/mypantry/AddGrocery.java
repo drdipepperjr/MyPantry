@@ -5,21 +5,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MyGroceries.OnFragmentInteractionListener} interface
+ * {@link AddGrocery.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MyGroceries#newInstance} factory method to
+ * Use the {@link AddGrocery#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MyGroceries extends Fragment {
+public class AddGrocery extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,7 +33,7 @@ public class MyGroceries extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public MyGroceries() {
+    public AddGrocery() {
         // Required empty public constructor
     }
 
@@ -41,11 +43,11 @@ public class MyGroceries extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MyGroceries.
+     * @return A new instance of fragment AddGrocery.
      */
     // TODO: Rename and change types and number of parameters
-    public static MyGroceries newInstance(String param1, String param2) {
-        MyGroceries fragment = new MyGroceries();
+    public static AddGrocery newInstance(String param1, String param2) {
+        AddGrocery fragment = new AddGrocery();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -66,17 +68,42 @@ public class MyGroceries extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_groceries, container, false);
+
+        return inflater.inflate(R.layout.fragment_add_grocery, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        /*
         FloatingActionButton addButton = getView().findViewById(R.id.floatingActionButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Fragment addGrocery = new AddGrocery();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(android.R.id.content, addGrocery).addToBackStack(null).commit();
+            }
+        });
+        */
+        Button addGrocery = (Button) getView().findViewById(R.id.add);
+        addGrocery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText title = getView().findViewById(R.id.title);
+                EditText price = getView().findViewById(R.id.price);
+                EditText quantity = getView().findViewById(R.id.quantity);
+                EditText expiration = getView().findViewById(R.id.expiration);
+                try {
+                    GroceryItem groceryItem = new GroceryItem(title.getText().toString(), Double.parseDouble(price.getText().toString()), Integer.parseInt(quantity.getText().toString()), expiration.getText().toString());
+                    Log.v("Add Another","" + title.getText() + " " + price.getText()
+                            + " " + quantity.getText()
+                            + " " + expiration.getText());
+                    Log.v("Add Another","" + groceryItem.Title + " " + groceryItem.Price
+                            + " " + groceryItem.Quantity
+                            + " " + groceryItem.Date);
+                }
+                catch (Exception e){};
+
+
             }
         });
 

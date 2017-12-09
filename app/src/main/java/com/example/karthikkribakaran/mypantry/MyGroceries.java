@@ -8,7 +8,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.DividerItemDecoration;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -24,6 +30,11 @@ public class MyGroceries extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private LinearLayoutManager mLayoutManager;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -60,6 +71,7 @@ public class MyGroceries extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -80,7 +92,23 @@ public class MyGroceries extends Fragment {
             }
         });
 
+        mRecyclerView = getView().findViewById(R.id.groceriesRecyclerView);
 
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new GroceriesAdapter(getGroceries());
+        mRecyclerView.setAdapter(mAdapter);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                mLayoutManager.getOrientation());
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -120,5 +148,21 @@ public class MyGroceries extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private List<GroceryItem> getGroceries() {
+        Date fourDaysAgo = new Date(System.currentTimeMillis() - (4 * 86400 * 1000));
+        Date today = new Date(System.currentTimeMillis());
+        Date fourDaysLater = new Date(System.currentTimeMillis() + (4 * 86400 * 1000));
+        Date thirtyDaysLater = new Date(System.currentTimeMillis() + (16 * 86400 * 1000));
+
+        GroceryItem apples = new GroceryItem("Apples", 0.50, 10, fourDaysAgo);
+        GroceryItem bananas = new GroceryItem("Bananas", 0.50, 10, today);
+        GroceryItem crackers = new GroceryItem("Crackers", 3.00, 1, fourDaysLater);
+        GroceryItem steak = new GroceryItem("Steak", 8.00, 2, fourDaysLater);
+        GroceryItem oj = new GroceryItem("Orange Juice", 3.00, 1, fourDaysLater);
+        GroceryItem cheetos = new GroceryItem("Cheetos", 0.50, 4, thirtyDaysLater);
+
+        return Arrays.asList(apples, bananas, crackers, steak, oj, cheetos);
     }
 }

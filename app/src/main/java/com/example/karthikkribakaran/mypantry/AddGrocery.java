@@ -1,5 +1,6 @@
 package com.example.karthikkribakaran.mypantry;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -30,6 +39,8 @@ public class AddGrocery extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    Calendar myCalendar = Calendar.getInstance();
 
     private OnFragmentInteractionListener mListener;
 
@@ -84,6 +95,31 @@ public class AddGrocery extends Fragment {
             }
         });
         */
+
+        EditText edittext= getView().findViewById(R.id.expiration);
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+
+        };
+
+        edittext.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(getActivity(), date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
         Button addGrocery = (Button) getView().findViewById(R.id.add);
         addGrocery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +129,7 @@ public class AddGrocery extends Fragment {
                 EditText quantity = getView().findViewById(R.id.quantity);
                 EditText expiration = getView().findViewById(R.id.expiration);
                 try {
-                    GroceryItem groceryItem = new GroceryItem(title.getText().toString(), Double.parseDouble(price.getText().toString()), Integer.parseInt(quantity.getText().toString()), expiration.getText().toString());
+                    GroceryItem groceryItem = new GroceryItem(title.getText().toString(), Double.parseDouble(price.getText().toString()), Integer.parseInt(quantity.getText().toString()), getDate(expiration.getText().toString()));
                     Log.v("Add Another","" + title.getText() + " " + price.getText()
                             + " " + quantity.getText()
                             + " " + expiration.getText());
@@ -101,7 +137,9 @@ public class AddGrocery extends Fragment {
                             + " " + groceryItem.Quantity
                             + " " + groceryItem.Date);
                 }
-                catch (Exception e){};
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 title.getText().clear();
                 price.getText().clear();
@@ -159,5 +197,22 @@ public class AddGrocery extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void updateLabel() {
+        SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT, Locale.US);
+
+        EditText expiration = getView().findViewById(R.id.expiration);
+        expiration.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    public Date getDate(String date) {
+        try {
+            DateFormat formatter = new SimpleDateFormat(GroceryItem.MY_FORMAT);
+            return formatter.parse(date);
+        } catch (ParseException exp) {
+            exp.printStackTrace();
+        }
+        return null;
     }
 }

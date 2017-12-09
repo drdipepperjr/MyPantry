@@ -57,7 +57,6 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         Date currDate = new Date(System.currentTimeMillis());
 
         int daysUntilExpiration = daysBetween(currDate, exp);
-        System.out.println(curr.Title + Integer.toString(daysUntilExpiration));
 
         String expirationText = "";
         if (daysUntilExpiration < 0) {
@@ -71,7 +70,6 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
             expirationText = "Expires "+ sdf.format(curr.Date);
         }
 
-        System.out.println(expirationText);
         holder.expiration.setText(expirationText);
     }
 

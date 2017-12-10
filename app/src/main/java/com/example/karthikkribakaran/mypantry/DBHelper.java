@@ -36,12 +36,18 @@ public class DBHelper extends SQLiteOpenHelper{
                 "create table pantry" +
                         "(item_name text, qty double, exp_date text, price double, tag text, primary key(item_name, exp_date))"
         );
+
+        db.execSQL(
+                "create table yearlySpending" +
+                        "(month text,spent double,wasted double)"
+        );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO Auto-generated method stub
-        db.execSQL("DROP TABLE IF EXISTS pantry");
+        //db.execSQL("DROP TABLE IF EXISTS pantry");
+        //db.execSQL("DROP TABLE IF EXISTS pantry");
         onCreate(db);
     }
 
@@ -58,6 +64,16 @@ public class DBHelper extends SQLiteOpenHelper{
         return true;
     }
 
+    public boolean insertMonth (String month, double spent, double wasted) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("month",month);
+        contentValues.put("spent", spent);
+        contentValues.put("wasted", wasted);
+        db.insert("yearlySpending", null, contentValues);
+        return true;
+    }
+
     public boolean updateItem (String itemName, double qty, String expDate, double price, String tag) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -67,22 +83,37 @@ public class DBHelper extends SQLiteOpenHelper{
         return true;
     }
 
+    public boolean updateMonth (String month, double spent, double wasted) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("spent", spent);
+        contentValues.put("wasted", wasted);
+        db.update("yearlySpending", contentValues, "month = ?", new String[]{month});
+        return true;
+    }
+
     public Cursor getData(String itemName, String expDate) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from pantry where item_name = ? and exp_date=?", new String[]{itemName,expDate} );
         return res;
     }
-/*
-    public void testData(String itemName, String expDate) {
+
+    public Cursor getAMonth(String month) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from pantry where item_name=" +itemName+ " and exp_date=" + expDate +"", null );
-        System.out.print("hi");
+        Cursor res =  db.rawQuery( "select * from pantry where month = ?", new String[]{month} );
+        return res;
     }
-*/
+
     public Integer deleteItem (String itemName,String expDate) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete("contacts",
                 "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
+    }
+
+    public Integer deleteMonth (String month) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("yearlySpending",
+                "month = ?", new String[]{month});
     }
 
     public ArrayList<String> getAllItems() {
@@ -99,6 +130,22 @@ public class DBHelper extends SQLiteOpenHelper{
         }
         return array_list;
     }
+
+    public ArrayList<String> getAllMonths() {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from yearlySpending", null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            array_list.add(res.getString(res.getColumnIndex(ITEM_NAME)));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
     public void testgetAllItems(String itemName) {
 
         //hp = new HashMap();
@@ -115,26 +162,6 @@ public class DBHelper extends SQLiteOpenHelper{
         }
 
     }
-
-    /* CODE THAT GOES IN DB HELPER
-    //db.insertItem("test", 111,  "12/9/17", 10, "Test");
-
-
-        Cursor cursor = db.getData("test", "12/9/17");
-        cursor.moveToFirst();
-        String itemName = cursor.getString(0);
-        double qty = cursor.getDouble(1);
-        String expDate = cursor.getString(2);
-        double price = cursor.getDouble(3);
-        String tag = cursor.getString(4);
-        Date testDate = new Date(expDate);
-
-        //System.err.println(itemName);
-
-        //Cursor res =  db.rawQuery( "select * from pantry where item_name =" +itemName+ " and exp_date=" + expDate +"", null );
-        GroceryItem test = new GroceryItem(itemName,price,27,testDate);
-        //db.testgetAllItems("test");
-     */
 
 //todo check if item/date is already in the database
 }

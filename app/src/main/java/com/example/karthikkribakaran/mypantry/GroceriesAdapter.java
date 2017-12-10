@@ -92,7 +92,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == 0) {
                                     dialog.dismiss();
-                                    consumeGrocery(item.id);
+                                    consumeGrocery(item.title, item.date);
                                 } else {
                                     dialog.dismiss();
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -111,7 +111,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                                             if (qty == null || qty.isEmpty()) {
                                                                 return;
                                                             }
-                                                            wasteGrocery(item.id, Integer.parseInt(qty));
+                                                            wasteGrocery(item.title, item.date, Integer.parseInt(qty));
                                                         }
 
                                                     });
@@ -124,11 +124,11 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         });
     }
 
-    public void consumeGrocery(int groceryId) {
+    public void consumeGrocery(String title, Date expiration) {
         // make call to DB and mark grocery as consumed
     }
 
-    public void wasteGrocery(int groceryId, int quantityWasted) {
+    public void wasteGrocery(String title, Date expiration, int quantityWasted) {
         // make call to DB and mark grocery with quantity wasted
     }
 

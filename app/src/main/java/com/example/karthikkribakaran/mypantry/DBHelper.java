@@ -116,5 +116,25 @@ public class DBHelper extends SQLiteOpenHelper{
 
     }
 
+    /* CODE THAT GOES IN DB HELPER
+    //db.insertItem("test", 111,  "12/9/17", 10, "Test");
+
+
+        Cursor cursor = db.getData("test", "12/9/17");
+        cursor.moveToFirst();
+        String itemName = cursor.getString(0);
+        double qty = cursor.getDouble(1);
+        String expDate = cursor.getString(2);
+        double price = cursor.getDouble(3);
+        String tag = cursor.getString(4);
+        Date testDate = new Date(expDate);
+
+        //System.err.println(itemName);
+
+        //Cursor res =  db.rawQuery( "select * from pantry where item_name =" +itemName+ " and exp_date=" + expDate +"", null );
+        GroceryItem test = new GroceryItem(itemName,price,27,testDate);
+        //db.testgetAllItems("test");
+     */
+
 //todo check if item/date is already in the database
 }

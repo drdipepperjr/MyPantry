@@ -15,11 +15,12 @@ public class MainActivity extends AppCompatActivity
                     MyGroceries.OnFragmentInteractionListener,
                     AddGrocery.OnFragmentInteractionListener{
 
+    DBHelper db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        db = new DBHelper(this);
         Fragment menu = new MyGroceries();
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, menu).commit();
     }

@@ -1,11 +1,14 @@
 package com.example.karthikkribakaran.mypantry;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
@@ -103,7 +106,7 @@ public class MyGroceries extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new GroceriesAdapter(getGroceries());
+        mAdapter = new GroceriesAdapter(getGroceries(), getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
@@ -156,12 +159,12 @@ public class MyGroceries extends Fragment {
         Date fourDaysLater = new Date(System.currentTimeMillis() + (4 * 86400 * 1000));
         Date thirtyDaysLater = new Date(System.currentTimeMillis() + (16 * 86400 * 1000));
 
-        GroceryItem apples = new GroceryItem("Apples", 0.50, 10, fourDaysAgo);
-        GroceryItem bananas = new GroceryItem("Bananas", 0.50, 10, today);
-        GroceryItem crackers = new GroceryItem("Crackers", 3.00, 1, fourDaysLater);
-        GroceryItem steak = new GroceryItem("Steak", 8.00, 2, fourDaysLater);
-        GroceryItem oj = new GroceryItem("Orange Juice", 3.00, 1, fourDaysLater);
-        GroceryItem cheetos = new GroceryItem("Cheetos", 0.50, 4, thirtyDaysLater);
+        GroceryItem apples = new GroceryItem("Apples", 0.50, 10, fourDaysAgo, 1, "dairy");
+        GroceryItem bananas = new GroceryItem("Bananas", 0.50, 10, today, 2, "dairy");
+        GroceryItem crackers = new GroceryItem("Crackers", 3.00, 1, fourDaysLater, 3, "dairy");
+        GroceryItem steak = new GroceryItem("Steak", 8.00, 2, fourDaysLater, 4, "dairy");
+        GroceryItem oj = new GroceryItem("Orange Juice", 3.00, 1, fourDaysLater, 5, "dairy");
+        GroceryItem cheetos = new GroceryItem("Cheetos", 0.50, 4, thirtyDaysLater, 6, "dairy");
 
         return Arrays.asList(apples, bananas, crackers, steak, oj, cheetos);
     }

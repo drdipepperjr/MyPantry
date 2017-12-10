@@ -8,11 +8,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -110,42 +113,52 @@ public class AddGrocery extends Fragment {
 
         };
 
-        edittext.setOnClickListener(new View.OnClickListener() {
+        edittext.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
-            public void onClick(View v) {
-                new DatePickerDialog(getActivity(), date, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            public boolean onTouch(View v, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    new DatePickerDialog(getActivity(), date, myCalendar
+                            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                }
+                return true;
             }
         });
 
         Button addGrocery = (Button) getView().findViewById(R.id.add);
+
+        final EditText titleView = getView().findViewById(R.id.title);
+        final EditText priceView = getView().findViewById(R.id.price);
+        final EditText quantityView = getView().findViewById(R.id.quantity);
+        final EditText expirationView = getView().findViewById(R.id.expiration);
+        final EditText tagView = getView().findViewById(R.id.tag);
+
         addGrocery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText title = getView().findViewById(R.id.title);
-                EditText price = getView().findViewById(R.id.price);
-                EditText quantity = getView().findViewById(R.id.quantity);
-                EditText expiration = getView().findViewById(R.id.expiration);
-                try {
-                    GroceryItem groceryItem = new GroceryItem(title.getText().toString(), Double.parseDouble(price.getText().toString()), Integer.parseInt(quantity.getText().toString()), getDate(expiration.getText().toString()));
-                    Log.v("Add Another","" + title.getText() + " " + price.getText()
-                            + " " + quantity.getText()
-                            + " " + expiration.getText());
-                    Log.v("Add Another","" + groceryItem.Title + " " + groceryItem.Price
-                            + " " + groceryItem.Quantity
-                            + " " + groceryItem.Date);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+                addToDatabase(titleView, priceView, quantityView, expirationView, tagView);
+//                try {
+//                    // TODO: add grocery item directly to DB instead of creating GroceryItem object
+//                    // since GroceryItem object requires id. Temporarily putting in id of 1.
+//
+//                    GroceryItem groceryItem = new GroceryItem(title.getText().toString(), Double.parseDouble(price.getText().toString()), Integer.parseInt(quantity.getText().toString()), getDate(expiration.getText().toString()), 1, "tag");
+//                    Log.v("Add Another","" + title.getText() + " " + price.getText()
+//                            + " " + quantity.getText()
+//                            + " " + expiration.getText());
+//                    Log.v("Add Another","" + groceryItem.title + " " + groceryItem.Price
+//                            + " " + groceryItem.Quantity
+//                            + " " + groceryItem.Date);
+//                }
+//                catch (Exception e) {
+//                    e.printStackTrace();
+//                }
 
-                title.getText().clear();
-                price.getText().clear();
-                quantity.getText().clear();
-                expiration.getText().clear();
-
+                titleView.getText().clear();
+                priceView.getText().clear();
+                quantityView.getText().clear();
+                expirationView.getText().clear();
+                tagView.getText().clear();
             }
         });
 
@@ -153,11 +166,29 @@ public class AddGrocery extends Fragment {
         finished.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().getSupportFragmentManager().popBackStackImmediate();
+            getActivity().getSupportFragmentManager().popBackStackImmediate();
             }
         });
 
 
+    }
+
+    public void addToDatabase(EditText titleView, EditText priceView, EditText quantityView, EditText expirationView, EditText tagView) {
+        String title;
+        Double price;
+        Double quantity;
+        Date expiration;
+        try {
+            title = titleView.getText().toString();
+            price = Double.parseDouble(priceView.getText().toString());
+            quantity = Double.parseDouble(quantityView.getText().toString());
+            expiration = getDate(expirationView.getText().toString());
+        } catch (Exception e) {
+            Log.v( "add grocery attempt", e.toString());
+            Toast.makeText(getActivity(), R.string.invalid_input, Toast.LENGTH_LONG).show();
+            return;
+        }
+        System.out.println("ADD: " + title + ", " + Double.toString(price) + ", " + Double.toString(quantity) + ", " + expiration.toString());
     }
 
     // TODO: Rename method, update argument and hook method into UI event

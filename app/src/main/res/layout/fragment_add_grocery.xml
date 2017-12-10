@@ -8,7 +8,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
         <EditText
             android:id="@+id/title"
@@ -25,7 +27,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Quantity"
-            android:inputType="number|numberSigned" />
+            android:inputType="numberDecimal" />
 
         <EditText
             android:id="@+id/price"
@@ -33,27 +35,37 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Price"
-            android:inputType="numberSigned" />
+            android:inputType="numberDecimal" />
 
         <EditText
             android:id="@+id/expiration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:hint="Expiration Date"
-            android:inputType="datetime|date" />
+            android:inputType="none" />
+
+        <EditText
+            android:id="@+id/tag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tag"
+            android:inputType="text"/>
 
         <Button
             android:id="@+id/add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Another" />
+            android:backgroundTint="#fa7921"
+            android:text="Add"
+            android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/button3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Finished" />
+            android:backgroundTint="#fa7921"
+            android:text="Exit"
+            android:textColor="#ffffff" />
 
     </LinearLayout>
 

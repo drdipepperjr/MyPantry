@@ -8,10 +8,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -111,13 +113,16 @@ public class AddGrocery extends Fragment {
 
         };
 
-        edittext.setOnClickListener(new View.OnClickListener() {
+        edittext.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
-            public void onClick(View v) {
-                new DatePickerDialog(getActivity(), date, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            public boolean onTouch(View v, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    new DatePickerDialog(getActivity(), date, myCalendar
+                            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                }
+                return true;
             }
         });
 
@@ -133,7 +138,6 @@ public class AddGrocery extends Fragment {
             @Override
             public void onClick(View view) {
                 addToDatabase(titleView, priceView, quantityView, expirationView, tagView);
-
 //                try {
 //                    // TODO: add grocery item directly to DB instead of creating GroceryItem object
 //                    // since GroceryItem object requires id. Temporarily putting in id of 1.

@@ -43,12 +43,14 @@ public class AddGrocery extends Fragment {
     private String mParam1;
     private String mParam2;
 
+
+    DBHelper db;
+
     Calendar myCalendar = Calendar.getInstance();
 
     private OnFragmentInteractionListener mListener;
 
     public AddGrocery() {
-        // Required empty public constructor
     }
 
     /**
@@ -76,6 +78,8 @@ public class AddGrocery extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        db = new DBHelper(this.getContext());
     }
 
     @Override
@@ -177,12 +181,17 @@ public class AddGrocery extends Fragment {
         String title;
         Double price;
         Double quantity;
-        Date expiration;
+        String expiration;
+        String tag;
         try {
             title = titleView.getText().toString();
             price = Double.parseDouble(priceView.getText().toString());
             quantity = Double.parseDouble(quantityView.getText().toString());
-            expiration = getDate(expirationView.getText().toString());
+            tag = tagView.getText().toString();
+            SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT);
+            expiration = sdf.format(getDate(expirationView.getText().toString()));
+            System.out.println(db.toString());
+            db.insertItem(title, quantity, expiration, price, tag);
         } catch (Exception e) {
             Log.v( "add grocery attempt", e.toString());
             Toast.makeText(getActivity(), R.string.invalid_input, Toast.LENGTH_LONG).show();

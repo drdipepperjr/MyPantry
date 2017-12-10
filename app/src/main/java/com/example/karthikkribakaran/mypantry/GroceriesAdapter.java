@@ -32,12 +32,14 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         public TextView name;
         public TextView quantity;
         public TextView expiration;
+        public com.pchmn.materialchips.ChipView tag;
         public ViewHolder(View v) {
             super(v);
             main = v;
             this.name = v.findViewById(R.id.name);
             this.quantity = v.findViewById(R.id.quantity);
             this.expiration = v.findViewById(R.id.expiration);
+            this.tag = v.findViewById(R.id.tag);
         }
     }
 
@@ -60,10 +62,14 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         GroceryItem curr = mDataset.get(position);
         holder.name.setText(curr.title);
 
-        holder.quantity.setText(String.format(" - %f", curr.quantity));
+
+        DecimalFormat df = new DecimalFormat("###.#");
+        holder.quantity.setText(String.format(" - " + df.format(curr.quantity)));
 
         Date exp = curr.date;
         Date currDate = new Date(System.currentTimeMillis());
+
+        holder.tag.setLabel(curr.tag);
 
         int daysUntilExpiration = daysBetween(currDate, exp);
 
@@ -100,7 +106,8 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                     LinearLayout layout = (LinearLayout) ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                             .inflate(R.layout.waste_dialog, null);
                                     TextView text = layout.findViewById(R.id.total_quantity);
-                                    text.setText(" / " + Double.toString(item.quantity));
+                                    DecimalFormat df = new DecimalFormat("###.#");
+                                    text.setText(" / " + df.format(item.quantity));
                                     final EditText input = layout.findViewById(R.id.waste_edit);
                                     builder.setView(layout)
                                             .setPositiveButton("Done",

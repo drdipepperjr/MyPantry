@@ -58,11 +58,11 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         GroceryItem curr = mDataset.get(position);
-        holder.name.setText(curr.Title);
+        holder.name.setText(curr.title);
 
-        holder.quantity.setText(String.format(" - %d", curr.Quantity));
+        holder.quantity.setText(String.format(" - %f", curr.quantity));
 
-        Date exp = curr.Date;
+        Date exp = curr.date;
         Date currDate = new Date(System.currentTimeMillis());
 
         int daysUntilExpiration = daysBetween(currDate, exp);
@@ -76,7 +76,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
             expirationText = "Expires in " + Integer.toString(daysUntilExpiration) + " days";
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT);
-            expirationText = "Expires "+ sdf.format(curr.Date);
+            expirationText = "Expires "+ sdf.format(curr.date);
         }
 
         holder.expiration.setText(expirationText);
@@ -87,20 +87,20 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(item.Title)
+                builder.setTitle(item.title)
                         .setItems(R.array.groceries, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == 0) {
                                     dialog.dismiss();
-                                    consumeGrocery(item.Id);
+                                    consumeGrocery(item.id);
                                 } else {
                                     dialog.dismiss();
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setTitle(item.Title + " - Quantity Wasted");
+                                    builder.setTitle(item.title + " - Quantity Wasted");
                                     LinearLayout layout = (LinearLayout) ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                             .inflate(R.layout.waste_dialog, null);
                                     TextView text = layout.findViewById(R.id.total_quantity);
-                                    text.setText(" / " + Integer.toString(item.Quantity));
+                                    text.setText(" / " + Double.toString(item.quantity));
                                     final EditText input = layout.findViewById(R.id.waste_edit);
                                     builder.setView(layout)
                                             .setPositiveButton("Done",
@@ -111,7 +111,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                                             if (qty == null || qty.isEmpty()) {
                                                                 return;
                                                             }
-                                                            wasteGrocery(item.Id, Integer.parseInt(qty));
+                                                            wasteGrocery(item.id, Integer.parseInt(qty));
                                                         }
 
                                                     });

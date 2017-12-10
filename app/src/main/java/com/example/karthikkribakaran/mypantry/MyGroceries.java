@@ -159,12 +159,12 @@ public class MyGroceries extends Fragment {
         Date fourDaysLater = new Date(System.currentTimeMillis() + (4 * 86400 * 1000));
         Date thirtyDaysLater = new Date(System.currentTimeMillis() + (16 * 86400 * 1000));
 
-        GroceryItem apples = new GroceryItem("Apples", 0.50, 10, fourDaysAgo, 1);
-        GroceryItem bananas = new GroceryItem("Bananas", 0.50, 10, today, 2);
-        GroceryItem crackers = new GroceryItem("Crackers", 3.00, 1, fourDaysLater, 3);
-        GroceryItem steak = new GroceryItem("Steak", 8.00, 2, fourDaysLater, 4);
-        GroceryItem oj = new GroceryItem("Orange Juice", 3.00, 1, fourDaysLater, 5);
-        GroceryItem cheetos = new GroceryItem("Cheetos", 0.50, 4, thirtyDaysLater, 6);
+        GroceryItem apples = new GroceryItem("Apples", 0.50, 10, fourDaysAgo, 1, "dairy");
+        GroceryItem bananas = new GroceryItem("Bananas", 0.50, 10, today, 2, "dairy");
+        GroceryItem crackers = new GroceryItem("Crackers", 3.00, 1, fourDaysLater, 3, "dairy");
+        GroceryItem steak = new GroceryItem("Steak", 8.00, 2, fourDaysLater, 4, "dairy");
+        GroceryItem oj = new GroceryItem("Orange Juice", 3.00, 1, fourDaysLater, 5, "dairy");
+        GroceryItem cheetos = new GroceryItem("Cheetos", 0.50, 4, thirtyDaysLater, 6, "dairy");
 
         return Arrays.asList(apples, bananas, crackers, steak, oj, cheetos);
     }

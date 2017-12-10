@@ -4,6 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="metrics">Metrics</string>
     <string name="quantity_wasted">Quantity Wasted</string>
+    <string name="invalid_input">Please enter valid input.</string>
     <string-array name="groceries">
         <item>Consume</item>
         <item>Waste</item>

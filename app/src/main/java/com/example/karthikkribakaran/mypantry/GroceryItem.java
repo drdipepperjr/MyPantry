@@ -7,20 +7,22 @@ import java.util.Date;
  */
 
 public class GroceryItem {
-    int Id;
-    String Title;
-    double Price;
-    int Quantity;
-    Date Date;
+    int id;
+    String title;
+    double price;
+    double quantity;
+    Date date;
+    String tag;
 
     public static final String MY_FORMAT = "MM/dd/yy";
 
-    public GroceryItem(String title, double price, int quantity, Date date, int Id)
+    public GroceryItem(String title, double price, double quantity, Date date, int Id, String Tag)
     {
-        this.Title = title;
-        this.Price = price;
-        this.Quantity = quantity;
-        this.Date = date;
-        this.Id = Id;
+        this.title = title;
+        this.price = price;
+        this.quantity = quantity;
+        this.date = date;
+        this.id = id;
+        this.tag = Tag;
     }
 }

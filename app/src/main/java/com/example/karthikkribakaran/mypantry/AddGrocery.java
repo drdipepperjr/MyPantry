@@ -129,7 +129,9 @@ public class AddGrocery extends Fragment {
                 EditText quantity = getView().findViewById(R.id.quantity);
                 EditText expiration = getView().findViewById(R.id.expiration);
                 try {
-                    GroceryItem groceryItem = new GroceryItem(title.getText().toString(), Double.parseDouble(price.getText().toString()), Integer.parseInt(quantity.getText().toString()), getDate(expiration.getText().toString()));
+                    // TODO: add grocery item directly to DB instead of creating GroceryItem object
+                    // since GroceryItem object requires id. Temporarily putting in id of 1.
+                    GroceryItem groceryItem = new GroceryItem(title.getText().toString(), Double.parseDouble(price.getText().toString()), Integer.parseInt(quantity.getText().toString()), getDate(expiration.getText().toString()), 1);
                     Log.v("Add Another","" + title.getText() + " " + price.getText()
                             + " " + quantity.getText()
                             + " " + expiration.getText());

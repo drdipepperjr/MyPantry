@@ -7,6 +7,7 @@ import java.util.Date;
  */
 
 public class GroceryItem {
+    int Id;
     String Title;
     double Price;
     int Quantity;
@@ -14,11 +15,12 @@ public class GroceryItem {
 
     public static final String MY_FORMAT = "MM/dd/yy";
 
-    public GroceryItem(String title, double price, int quantity, Date date)
+    public GroceryItem(String title, double price, int quantity, Date date, int Id)
     {
         this.Title = title;
         this.Price = price;
         this.Quantity = quantity;
         this.Date = date;
+        this.Id = Id;
     }
 }

@@ -3,4 +3,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="metrics">Metrics</string>
+    <string name="quantity_wasted">Quantity Wasted</string>
+    <string-array name="groceries">
+        <item>Consume</item>
+        <item>Waste</item>
+    </string-array>
+
 </resources>

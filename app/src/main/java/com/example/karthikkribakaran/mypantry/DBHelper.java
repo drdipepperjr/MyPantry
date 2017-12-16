@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class DBHelper extends SQLiteOpenHelper{
 
     public static final String DATABASE_NAME = "MyPantry.db";
+    
     public static final String PANTRY_TABLE_NAME = "pantry";
     public static final String ITEM_NAME = "item_name";
     public static final String QTY = "qty";
@@ -27,8 +28,11 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public static final String YEARLY_SPENDING_TABLE_NAME = "yearlySpending";
     public static final String MONTH = "month";
-    public static final String WASTED = "wasted";
     public static final String SPENT = "spent";
+
+    public static final String USED_ITEMS_TABLE_NAME = "usedItems";
+    public static final String CONSUMED = "consumed";
+    public static final String WASTED = "wasted";
 
     private HashMap hp;
 
@@ -38,21 +42,27 @@ public class DBHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // TODO Auto-generated method stub
+
+        // create pantry table
         db.execSQL(
                 "create table pantry" +
                         "(item_name text, qty double, exp_date text, price double, tag text, primary key(item_name, exp_date))"
         );
 
+        // create yearlySpending table
         db.execSQL(
                 "create table yearlySpending" +
                         "(month text,spent double,wasted double)"
+        );
+
+        // create usedItems table
+        db.execSQL(
+                "create table " + USED_ITEMS_TABLE_NAME + "(item_name text, consumed double, wasted double, tag text)"
         );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO Auto-generated method stub
         //db.execSQL("DROP TABLE IF EXISTS pantry");
         //db.execSQL("DROP TABLE IF EXISTS pantry");
         onCreate(db);
@@ -77,7 +87,7 @@ public class DBHelper extends SQLiteOpenHelper{
         // Check if item is in DB
         // TODO: view does not update item qty
         Cursor res = getItem(itemName,expDate);
-        if(res.getCount() == 1) {
+        if(res.getCount()!=0) {
             res.moveToFirst();
             String itemNameT = res.getString(0);
             double qtyT = res.getDouble(1) + qty;
@@ -273,4 +283,80 @@ public class DBHelper extends SQLiteOpenHelper{
         return array_list;
     }
 
+
+
+    //                                                                            //
+    //                                                                            //
+    //                                                                            //
+    //                      HELPER CODE FOR  USED ITEMS TABLE                     //
+    //                                                                            //
+    //                                                                            //
+
+
+    public void insertUsedItem(String itemName, double consumed, double wasted, String tag){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Check if item is in DB
+        // TODO: view does not update item qty
+        Cursor res = getUsedItem(itemName);
+        if(res.getCount() == 1) {
+            res.moveToFirst();
+            String itemNameT = res.getString(0);
+            double consumedT = res.getDouble(1);
+            double wastedT = res.getDouble(3);
+            String tagT = res.getString(4);
+
+            updateUsedItem(itemNameT,consumedT,wastedT,tagT);
+        }
+
+        else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(ITEM_NAME, itemName);
+            contentValues.put(CONSUMED, consumed);
+            contentValues.put(WASTED, wasted);
+            contentValues.put(TAG, tag);
+
+            System.out.println(contentValues.toString());
+            try {
+                db.insert(USED_ITEMS_TABLE_NAME, null, contentValues);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /*
+        Update a usedItem with matching itemName
+     */
+    public void updateUsedItem (String itemName, double consumed, double wasted, String tag) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ITEM_NAME, itemName);
+        contentValues.put(CONSUMED, consumed);
+        contentValues.put(WASTED, wasted);
+        contentValues.put(TAG, tag);
+
+        try {
+            db.update(USED_ITEMS_TABLE_NAME, contentValues, "item_name = ?", new String[]{itemName});
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /*
+        Return a Cursor which contains the values of the item
+     */
+    public Cursor getUsedItem(String itemName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select * from usedItems where item_name = ?", new String[]{itemName});
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return res;
+    }
 }

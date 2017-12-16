@@ -58,6 +58,7 @@ public class DBHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
+
     //                                                                            //
     //                                                                            //
     //                                                                            //
@@ -66,28 +67,42 @@ public class DBHelper extends SQLiteOpenHelper{
     //                                                                            //
     //                                                                            //
 
-
     /*
         Insert an item into the pantry table
         If item already exists, update the quantity
-        TODO: check if item already exists
      */
     public void insertItem (String itemName, double qty, String expDate, double price, String tag) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ITEM_NAME, itemName);
-        contentValues.put(QTY, qty);
-        contentValues.put(EXP_DATE, expDate);
-        contentValues.put(PRICE, price);
-        contentValues.put(TAG, tag);
 
-        System.out.println(contentValues.toString());
-        try {
-            db.insert("pantry", null, contentValues);
-        } catch(Exception e){
-            e.printStackTrace();
+        // Check if item is in DB
+        // TODO: view does not update item qty
+        Cursor res = getItem(itemName,expDate);
+        if(res.getCount() == 1) {
+            res.moveToFirst();
+            String itemNameT = res.getString(0);
+            double qtyT = res.getDouble(1) + qty;
+            String expDateT = res.getString(2);
+            double priceT = res.getDouble(3);
+            String tagT = res.getString(4);
+
+            updateItem(itemNameT,qtyT,expDateT,priceT,tagT);
         }
 
+        else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(ITEM_NAME, itemName);
+            contentValues.put(QTY, qty);
+            contentValues.put(EXP_DATE, expDate);
+            contentValues.put(PRICE, price);
+            contentValues.put(TAG, tag);
+
+            System.out.println(contentValues.toString());
+            try {
+                db.insert("pantry", null, contentValues);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -97,8 +112,12 @@ public class DBHelper extends SQLiteOpenHelper{
     public void updateItem (String itemName, double qty, String expDate, double price, String tag) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("exp_date", expDate);
-        contentValues.put("tag", tag);
+        contentValues.put(ITEM_NAME, itemName);
+        contentValues.put(QTY, qty);
+        contentValues.put(EXP_DATE, expDate);
+        contentValues.put(PRICE, price);
+        contentValues.put(TAG, tag);
+
         try {
             db.update(PANTRY_TABLE_NAME, contentValues, "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
         } catch(Exception e){
@@ -129,7 +148,7 @@ public class DBHelper extends SQLiteOpenHelper{
     public void deleteItem (String itemName, String expDate) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
-            db.delete("contacts",
+            db.delete(PANTRY_TABLE_NAME,
                     "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
         } catch(Exception e){
             e.printStackTrace();

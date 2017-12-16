@@ -17,13 +17,18 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DBHelper extends SQLiteOpenHelper{
 
-    public static final String DATABASE_NAME = "Pantry.db";
-    public static final String CONTACTS_TABLE_NAME = "pantry";
+    public static final String DATABASE_NAME = "MyPantry.db";
+    public static final String PANTRY_TABLE_NAME = "pantry";
     public static final String ITEM_NAME = "item_name";
-    public static final double QTY = 0.0;
-    public static final double PRICE = 0.0;
-    public static final String EXP_DATE = "02/02/2003";
-    public static final String TAG = "household";
+    public static final String QTY = "qty";
+    public static final String PRICE = "price";
+    public static final String EXP_DATE = "exp_date";
+    public static final String TAG = "tag";
+
+    public static final String YEARLY_SPENDING_TABLE_NAME = "yearlySpending";
+    public static final String MONTH = "month";
+    public static final String WASTED = "wasted";
+    public static final String SPENT = "spent";
 
     private HashMap hp;
 
@@ -53,72 +58,88 @@ public class DBHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insertItem (String itemName, double qty, String expDate, double price, String tag) {
+    //                                                                            //
+    //                                                                            //
+    //                                                                            //
+    //                      HELPER CODE FOR PANTRY TABLE                          //
+    //                                                                            //
+    //                                                                            //
+    //                                                                            //
+
+
+    /*
+        Insert an item into the pantry table
+        If item already exists, update the quantity
+        TODO: check if item already exists
+     */
+    public void insertItem (String itemName, double qty, String expDate, double price, String tag) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("item_name", itemName);
-        contentValues.put("qty", qty);
-        contentValues.put("exp_date", expDate);
-        contentValues.put("price", price);
-        contentValues.put("tag", tag);
+        contentValues.put(ITEM_NAME, itemName);
+        contentValues.put(QTY, qty);
+        contentValues.put(EXP_DATE, expDate);
+        contentValues.put(PRICE, price);
+        contentValues.put(TAG, tag);
 
         System.out.println(contentValues.toString());
-        db.insert("pantry", null, contentValues);
-        return true;
+        try {
+            db.insert("pantry", null, contentValues);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
 
-    public boolean insertMonth (String month, double spent, double wasted) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("month",month);
-        contentValues.put("spent", spent);
-        contentValues.put("wasted", wasted);
-        db.insert("yearlySpending", null, contentValues);
-        return true;
-    }
 
-    public boolean updateItem (String itemName, double qty, String expDate, double price, String tag) {
+    /*
+        Update an item with matching itemName and expDate
+     */
+    public void updateItem (String itemName, double qty, String expDate, double price, String tag) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("exp_date", expDate);
         contentValues.put("tag", tag);
-        db.update("pantry", contentValues, "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
-        return true;
+        try {
+            db.update(PANTRY_TABLE_NAME, contentValues, "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
 
-    public boolean updateMonth (String month, double spent, double wasted) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("spent", spent);
-        contentValues.put("wasted", wasted);
-        db.update("yearlySpending", contentValues, "month = ?", new String[]{month});
-        return true;
-    }
 
-    public Cursor getData(String itemName, String expDate) {
+    /*
+        Return a Cursor which contains the values of the item
+     */
+    public Cursor getItem(String itemName, String expDate) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from pantry where item_name = ? and exp_date=?", new String[]{itemName,expDate} );
+
+        Cursor res = null;
+         try {
+             res = db.rawQuery("select * from pantry where item_name = ? and exp_date=?", new String[]{itemName, expDate});
+         } catch(Exception e){
+             e.printStackTrace();
+         }
         return res;
     }
 
-    public Cursor getAMonth(String month) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from pantry where month = ?", new String[]{month} );
-        return res;
-    }
-
-    public Integer deleteItem (String itemName,String expDate) {
+    /*
+        Remove the item from the table
+     */
+    public void deleteItem (String itemName, String expDate) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete("contacts",
-                "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
+        try {
+            db.delete("contacts",
+                    "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
-    public Integer deleteMonth (String month) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete("yearlySpending",
-                "month = ?", new String[]{month});
-    }
 
+    /*
+        Return an arraylist containing all the items in the pantry table
+     */
     public ArrayList<GroceryItem> getAllItems() {
         ArrayList<GroceryItem> array_list = new ArrayList<>();
 
@@ -149,6 +170,75 @@ public class DBHelper extends SQLiteOpenHelper{
         return array_list;
     }
 
+
+
+
+    //                                                                            //
+    //                                                                            //
+    //                                                                            //
+    //                 HELPER CODE FOR  YEARLY_SPENDING TABLE                     //
+    //                                                                            //
+    //                                                                            //
+    //                                                                            //
+
+    /*
+        Insert a month into the yearly spending table
+     */
+    public boolean insertMonth (String month, double spent, double wasted) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("month",month);
+        contentValues.put("spent", spent);
+        contentValues.put("wasted", wasted);
+        try {
+            db.insert("yearlySpending", null, contentValues);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    /*
+        Update the money spent and wasted for a certain month in the yearly spending table
+     */
+    public boolean updateMonth (String month, double spent, double wasted) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("spent", spent);
+        contentValues.put("wasted", wasted);
+        try {
+            db.update("yearlySpending", contentValues, "month = ?", new String[]{month});
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    /*
+        return a Cursor which contains the values for a month
+     */
+    public Cursor getMonth(String month) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = null;
+        try{
+            res =  db.rawQuery( "select * from pantry where month = ?", new String[]{month} );
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /*
+        Delete a month from the yearlySpending table (should only be used if there are already 12 months)
+     */
+    public Integer deleteMonth (String month) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("yearlySpending",
+                "month = ?", new String[]{month});
+    }
+
+
     public ArrayList<String> getAllMonths() {
         ArrayList<String> array_list = new ArrayList<String>();
 
@@ -164,22 +254,4 @@ public class DBHelper extends SQLiteOpenHelper{
         return array_list;
     }
 
-    public void testgetAllItems(String itemName) {
-
-        //hp = new HashMap();
-        SQLiteDatabase db = this.getReadableDatabase();
-        //Cursor res =  db.query("pantry",new String[]{itemName},"item_name=?",new String[]{itemName},null, null,null);
-        Cursor res =  db.rawQuery( "select * from pantry where item_name=?", new String[]{itemName} );
-
-        res.moveToFirst();
-
-        while(res.isAfterLast() == false){
-            System.out.println(res.getString(0));
-            res.moveToNext();
-
-        }
-
-    }
-
-//todo check if item/date is already in the database
 }

@@ -7,6 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -29,6 +39,16 @@ public class MetricsMainMenu extends Fragment {
 
     public DBHelper db;
     private OnFragmentInteractionListener mListener;
+
+    //wasted items lists
+    private List <String> wastedItems;
+    private List <Double> amountWasted;
+    private List <Double> moneyWasted;
+    private List <String> tags;
+
+    //wasted tags Lists
+    private List <String> wastedTags;
+    private ArrayList <Float> moneyWastedByTags;
 
     public MetricsMainMenu() {
         // Required empty public constructor
@@ -61,7 +81,29 @@ public class MetricsMainMenu extends Fragment {
 
         }
         db=new DBHelper(this.getContext());
+        getPieChart();
+        //PieChart chart = (PieChart) findViewById(R.id.yearlyChart);
+    }
 
+    private void updateWastedFoodList(){
+        //updates lists by calling DBhelper functions
+        //updates tagslists and adds total wasted for each tag
+    }
+
+    private void getPieChart(){
+
+        List<PieEntry> pieSlices= new ArrayList<>();
+        //get items
+        pieSlices.add(new PieEntry(18.5f, "Green"));
+        updateWastedFoodList();
+        for(int i=0; i<wastedTags.size(); i++){
+            pieSlices.add(new PieEntry(moneyWastedByTags.get(i), wastedTags.get(i)));
+        }
+
+        PieDataSet dataSet =new PieDataSet(pieSlices, "Monthly Wasted Percentages By Tags");
+        PieData data = new PieData(dataSet);
+
+        //PieChart monthlypieChart = (PieChart) findViewById(R.id.monthyPieChart);
     }
 
     @Override

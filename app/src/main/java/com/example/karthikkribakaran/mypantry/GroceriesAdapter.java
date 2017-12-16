@@ -118,7 +118,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                                             if (qty == null || qty.isEmpty()) {
                                                                 return;
                                                             }
-                                                            wasteGrocery(item.title, item.date, Integer.parseInt(qty));
+                                                            wasteGrocery(item.title, item.date, Double.parseDouble(qty));
                                                         }
 
                                                     });
@@ -135,7 +135,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         // make call to DB and mark grocery as consumed
     }
 
-    public void wasteGrocery(String title, Date expiration, int quantityWasted) {
+    public void wasteGrocery(String title, Date expiration, double quantityWasted) {
         // make call to DB and mark grocery with quantity wasted
     }
 

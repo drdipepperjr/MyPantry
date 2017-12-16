@@ -18,7 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class DBHelper extends SQLiteOpenHelper{
 
     public static final String DATABASE_NAME = "MyPantry.db";
-    
+
     public static final String PANTRY_TABLE_NAME = "pantry";
     public static final String ITEM_NAME = "item_name";
     public static final String QTY = "qty";
@@ -151,6 +151,8 @@ public class DBHelper extends SQLiteOpenHelper{
          }
         return res;
     }
+
+
 
     /*
         Remove the item from the table
@@ -359,4 +361,20 @@ public class DBHelper extends SQLiteOpenHelper{
         }
         return res;
     }
+
+    /*
+     Get a list of all items that have not been totally consumed
+    */
+    public Cursor getWastedItems(String date){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res =  db.rawQuery( "select * from usedItems where wasted > 0", null );
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return res;
+    }
+
 }

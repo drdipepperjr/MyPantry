@@ -13,7 +13,7 @@ public class GroceryItem {
     Date date;
     String tag;
 
-    public static final String MY_FORMAT = "MM/dd/yy";
+    public static final String MY_FORMAT = "MM/dd/yyyy";
 
     public GroceryItem(String title, double price, double quantity, Date date, String Tag)
     {

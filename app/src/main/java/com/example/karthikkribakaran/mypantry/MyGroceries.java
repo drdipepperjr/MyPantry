@@ -160,36 +160,36 @@ public class MyGroceries extends Fragment {
 
     private List<GroceryItem> getGroceries() {
         // Proof of concept for DB
-        //db.insertItem("test", 111,  "12/9/17", 10, "Test");
+        // db.insertItem("test", 111,  "12/9/17", 10, "Test");
 
-
-        Cursor cursor = db.getData("test", "12/9/17");
-        cursor.moveToFirst();
-        String itemName = cursor.getString(0);
-        double qty = cursor.getDouble(1);
-        String expDate = cursor.getString(2);
-        double price = cursor.getDouble(3);
-        String tag = cursor.getString(4);
-        Date testDate = new Date(expDate);
-
-        //System.err.println(itemName);
-
-        //Cursor res =  db.rawQuery( "select * from pantry where item_name =" +itemName+ " and exp_date=" + expDate +"", null );
-        GroceryItem test = new GroceryItem(itemName,price,27,testDate, "meat");
-        //db.testgetAllItems("test");
-
-        Date fourDaysAgo = new Date(System.currentTimeMillis() - (4 * 86400 * 1000));
-        Date today = new Date(System.currentTimeMillis());
-        Date fourDaysLater = new Date(System.currentTimeMillis() + (4 * 86400 * 1000));
-        Date thirtyDaysLater = new Date(System.currentTimeMillis() + (16 * 86400 * 1000));
-
-        GroceryItem apples = new GroceryItem("Apples", 0.50, 10, fourDaysAgo, "dairy");
-        GroceryItem bananas = new GroceryItem("Bananas", 0.50, 10, today, "dairy");
-        GroceryItem crackers = new GroceryItem("Crackers", 3.00, 1, fourDaysLater, "dairy");
-        GroceryItem steak = new GroceryItem("Steak", 8.00, 2, fourDaysLater, "dairy");
-        GroceryItem oj = new GroceryItem("Orange Juice", 3.00, 1, fourDaysLater, "dairy");
-        GroceryItem cheetos = new GroceryItem("Cheetos", 0.50, 4, thirtyDaysLater, "dairy");
-
-        return Arrays.asList(apples, bananas, crackers, steak, oj, cheetos, test);
+        return db.getAllItems();
+//        Cursor cursor = db.getData("test", "12/9/17");
+//        cursor.moveToFirst();
+//        String itemName = cursor.getString(0);
+//        double qty = cursor.getDouble(1);
+//        String expDate = cursor.getString(2);
+//        double price = cursor.getDouble(3);
+//        String tag = cursor.getString(4);
+//        Date testDate = new Date(expDate);
+//
+//        //System.err.println(itemName);
+//
+//        //Cursor res =  db.rawQuery( "select * from pantry where item_name =" +itemName+ " and exp_date=" + expDate +"", null );
+//        GroceryItem test = new GroceryItem(itemName,price,27,testDate, "meat");
+//        //db.testgetAllItems("test");
+//
+//        Date fourDaysAgo = new Date(System.currentTimeMillis() - (4 * 86400 * 1000));
+//        Date today = new Date(System.currentTimeMillis());
+//        Date fourDaysLater = new Date(System.currentTimeMillis() + (4 * 86400 * 1000));
+//        Date thirtyDaysLater = new Date(System.currentTimeMillis() + (16 * 86400 * 1000));
+//
+//        GroceryItem apples = new GroceryItem("Apples", 0.50, 10, fourDaysAgo, "dairy");
+//        GroceryItem bananas = new GroceryItem("Bananas", 0.50, 10, today, "dairy");
+//        GroceryItem crackers = new GroceryItem("Crackers", 3.00, 1, fourDaysLater, "dairy");
+//        GroceryItem steak = new GroceryItem("Steak", 8.00, 2, fourDaysLater, "dairy");
+//        GroceryItem oj = new GroceryItem("Orange Juice", 3.00, 1, fourDaysLater, "dairy");
+//        GroceryItem cheetos = new GroceryItem("Cheetos", 0.50, 4, thirtyDaysLater, "dairy");
+//
+//        return Arrays.asList(apples, bananas, crackers, steak, oj, cheetos, test);
     }
 }

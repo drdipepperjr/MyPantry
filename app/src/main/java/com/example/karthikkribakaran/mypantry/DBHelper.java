@@ -3,7 +3,9 @@ package com.example.karthikkribakaran.mypantry;
 /**
  * Created by rebeccalee on 12/9/17.
  */
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import android.content.ContentValues;
@@ -60,6 +62,7 @@ public class DBHelper extends SQLiteOpenHelper{
         contentValues.put("price", price);
         contentValues.put("tag", tag);
 
+        System.out.println(contentValues.toString());
         db.insert("pantry", null, contentValues);
         return true;
     }
@@ -116,8 +119,8 @@ public class DBHelper extends SQLiteOpenHelper{
                 "month = ?", new String[]{month});
     }
 
-    public ArrayList<String> getAllItems() {
-        ArrayList<String> array_list = new ArrayList<String>();
+    public ArrayList<GroceryItem> getAllItems() {
+        ArrayList<GroceryItem> array_list = new ArrayList<>();
 
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -125,7 +128,22 @@ public class DBHelper extends SQLiteOpenHelper{
         res.moveToFirst();
 
         while(res.isAfterLast() == false){
-            array_list.add(res.getString(res.getColumnIndex(ITEM_NAME)));
+            String title = res.getString(res.getColumnIndex("item_name"));
+            String tag = res.getString(res.getColumnIndex("tag"));
+            Double qty = res.getDouble(res.getColumnIndex("qty"));
+            Double price = res.getDouble(res.getColumnIndex("price"));
+
+            SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT);
+            Date exp;
+            try {
+                exp = sdf.parse(res.getString(res.getColumnIndex("exp_date")));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            GroceryItem groceryItem = new GroceryItem(title, qty, price, exp, tag);
+            array_list.add(groceryItem);
             res.moveToNext();
         }
         return array_list;

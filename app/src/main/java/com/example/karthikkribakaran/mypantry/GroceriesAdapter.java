@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
@@ -29,6 +31,11 @@ import org.w3c.dom.Text;
 public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.ViewHolder> {
     private List<GroceryItem> mDataset;
     private Context context;
+    private FragmentManager fragmentManager;
+    public DBHelper db;
+
+
+    SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT);
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View main;
@@ -51,9 +58,11 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         }
     }
 
-    public GroceriesAdapter(List<GroceryItem> myDataset, Context context) {
+    public GroceriesAdapter(List<GroceryItem> myDataset, Context context, FragmentManager fragmentManager) {
         this.context = context;
         this.mDataset = myDataset;
+        this.fragmentManager = fragmentManager;
+        db = new DBHelper(context);
     }
 
     @Override
@@ -68,13 +77,13 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        GroceryItem curr = mDataset.get(position);
+        final GroceryItem curr = mDataset.get(position);
         holder.name.setText(curr.title);
 
 
 
         DecimalFormat df = new DecimalFormat("###.#");
-        holder.quantity.setText(String.format(" - " + df.format(curr.price ) + " left"));
+        holder.quantity.setText(String.format(" - " + df.format(curr.quantity) + " left"));
 
         Date exp = curr.date;
         Date currDate = new Date(System.currentTimeMillis());
@@ -94,7 +103,6 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         } else if (daysUntilExpiration <= 14) {
             expirationText = "Expires in " + Integer.toString(daysUntilExpiration) + " days";
         } else {
-            SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT);
             expirationText = "Expires "+ sdf.format(curr.date);
         }
 
@@ -110,8 +118,15 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                         .setItems(R.array.groceries, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == 0) {
+                                    // edit
                                     dialog.dismiss();
-                                    consumeGrocery(item.title, item.date);
+                                    editGrocery(item);
+                                } else if (which == 1) {
+                                    // delete
+                                    dialog.dismiss();
+                                    db.deleteItem(curr.title, sdf.format(curr.date));
+                                    mDataset = db.getAllItems();
+                                    notifyDataSetChanged();
                                 } else {
                                     dialog.dismiss();
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -131,7 +146,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                                             if (qty == null || qty.isEmpty()) {
                                                                 return;
                                                             }
-                                                            wasteGrocery(item.title, item.date, Double.parseDouble(qty));
+                                                            wasteGrocery(item.title, item.date, Double.parseDouble(qty), curr.quantity, curr.tag);
                                                         }
 
                                                     });
@@ -144,13 +159,11 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         });
     }
 
-    public void consumeGrocery(String title, Date expiration) {
-        // make call to DB and mark grocery as consumed
-    }
-
-    public void wasteGrocery(String title, Date expiration, double quantityWasted) {
-        // make call to DB and mark grocery with quantity wasted
-
+    public void wasteGrocery(String title, Date expiration, double quantityWasted, double totalQuantity, String tag) {
+        db.deleteItem(title, sdf.format(expiration));
+        db.insertUsedItem(title, totalQuantity - quantityWasted, quantityWasted, tag);
+        mDataset = db.getAllItems();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -160,5 +173,10 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
 
     public int daysBetween(Date d1, Date d2){
         return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    public void editGrocery(GroceryItem groceryItem) {
+        Fragment addGrocery = AddGrocery.newInstance(groceryItem, true);
+        fragmentManager.beginTransaction().replace(android.R.id.content, addGrocery).addToBackStack(null).commit();
     }
 }

@@ -15,6 +15,8 @@ public class GroceryItem {
 
     public static final String MY_FORMAT = "MM/dd/yyyy";
 
+    public GroceryItem() {}
+
     public GroceryItem(String title, double price, double quantity, Date date, String Tag)
     {
         this.title = title;

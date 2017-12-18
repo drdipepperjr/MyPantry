@@ -40,8 +40,19 @@ public class AddGrocery extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String title;
+    private Double quantity;
+    private Double price;
+    private Date date;
+    private String tag;
+
+    private boolean isEdit;
+
+    private EditText titleView;
+    private EditText priceView;
+    private EditText quantityView;
+    private EditText expirationView;
+    private EditText tagView;
 
 
     DBHelper db;
@@ -57,26 +68,34 @@ public class AddGrocery extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment AddGrocery.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddGrocery newInstance(String param1, String param2) {
+    public static AddGrocery newInstance(GroceryItem groceryItem, boolean isEdit) {
         AddGrocery fragment = new AddGrocery();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString("title", groceryItem.title);
+        args.putDouble("quantity", groceryItem.quantity);
+        args.putDouble("price", groceryItem.price);
+        fragment.setDate(groceryItem.date);
+        args.putString("tag", groceryItem.tag);
         fragment.setArguments(args);
+        fragment.isEdit = isEdit;
         return fragment;
+    }
+
+    private void setDate(Date date) {
+        this.date = date;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            title = getArguments().getString("title");
+            quantity = getArguments().getDouble("quantity");
+            price = getArguments().getDouble("price");
+            tag = getArguments().getString("tag");
         }
 
         db = new DBHelper(this.getContext());
@@ -130,13 +149,17 @@ public class AddGrocery extends Fragment {
             }
         });
 
-        Button addGrocery = (Button) getView().findViewById(R.id.add);
+        Button addGrocery = getView().findViewById(R.id.add);
 
-        final EditText titleView = getView().findViewById(R.id.title);
-        final EditText priceView = getView().findViewById(R.id.price);
-        final EditText quantityView = getView().findViewById(R.id.quantity);
-        final EditText expirationView = getView().findViewById(R.id.expiration);
-        final EditText tagView = getView().findViewById(R.id.tag);
+        titleView = getView().findViewById(R.id.title);
+        priceView = getView().findViewById(R.id.price);
+        quantityView = getView().findViewById(R.id.quantity);
+        expirationView = getView().findViewById(R.id.expiration);
+        tagView = getView().findViewById(R.id.tag);
+
+        if (isEdit) {
+            populateFields();
+        }
 
         addGrocery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,12 +180,15 @@ public class AddGrocery extends Fragment {
 //                catch (Exception e) {
 //                    e.printStackTrace();
 //                }
-
-                titleView.getText().clear();
-                priceView.getText().clear();
-                quantityView.getText().clear();
-                expirationView.getText().clear();
-                tagView.getText().clear();
+                if (isEdit) {
+                    getActivity().getSupportFragmentManager().popBackStackImmediate();
+                } else {
+                    titleView.getText().clear();
+                    priceView.getText().clear();
+                    quantityView.getText().clear();
+                    expirationView.getText().clear();
+                    tagView.getText().clear();
+                }
             }
         });
 
@@ -178,26 +204,29 @@ public class AddGrocery extends Fragment {
     }
 
     public void addToDatabase(EditText titleView, EditText priceView, EditText quantityView, EditText expirationView, EditText tagView) {
-        String title;
-        Double price;
-        Double quantity;
-        String expiration;
-        String tag;
+        String newTitle;
+        Double newPrice;
+        Double newQuantity;
+        String newExpiration;
+        String newTag;
         try {
-            title = titleView.getText().toString();
-            price = Double.parseDouble(priceView.getText().toString());
-            quantity = Double.parseDouble(quantityView.getText().toString());
-            tag = tagView.getText().toString();
+            newTitle = titleView.getText().toString();
+            newPrice = Double.parseDouble(priceView.getText().toString());
+            newQuantity = Double.parseDouble(quantityView.getText().toString());
+            newTag = tagView.getText().toString();
             SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT);
-            expiration = sdf.format(getDate(expirationView.getText().toString()));
-            System.out.println(db.toString());
-            db.insertItem(title, quantity, expiration, price, tag);
+            newExpiration = sdf.format(getDate(expirationView.getText().toString()));
+            if (isEdit) {
+                db.updateItem(title, sdf.format(date), newTitle, newQuantity, newExpiration, newPrice, newTag);
+            } else {
+                db.insertItem(newTitle, newQuantity, newExpiration, newPrice, newTag);
+            }
         } catch (Exception e) {
             Log.v( "add grocery attempt", e.toString());
             Toast.makeText(getActivity(), R.string.invalid_input, Toast.LENGTH_LONG).show();
             return;
         }
-        System.out.println("ADD: " + title + ", " + Double.toString(price) + ", " + Double.toString(quantity) + ", " + expiration.toString());
+        System.out.println("ADD: " + title + ", " + Double.toString(price) + ", " + Double.toString(quantity) + ", " + newExpiration.toString());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -254,5 +283,16 @@ public class AddGrocery extends Fragment {
             exp.printStackTrace();
         }
         return null;
+    }
+
+    private void populateFields() {
+        titleView.setText(title);
+        priceView.setText(Double.toString(price));
+        quantityView.setText(Double.toString(quantity));
+
+        SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT, Locale.US);
+        expirationView.setText(sdf.format(date));
+
+        tagView.setText(tag);
     }
 }

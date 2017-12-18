@@ -2,9 +2,12 @@ package com.example.karthikkribakaran.mypantry;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +43,8 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
             this.quantity = v.findViewById(R.id.quantity);
             this.expiration = v.findViewById(R.id.expiration);
             this.tag = v.findViewById(R.id.tag);
+            //Log.v("background:","" + v.getBackground() );
+
         }
     }
 
@@ -53,6 +58,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                                    int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.grocery_view, parent, false);
+        Log.v("background:","" + v.getDrawingCacheBackgroundColor() );
         return new ViewHolder(v);
     }
 
@@ -63,8 +69,8 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         holder.name.setText(curr.title);
 
 
-        DecimalFormat df = new DecimalFormat("###.#");
-        holder.quantity.setText(String.format(" - " + df.format(curr.quantity)));
+        DecimalFormat df = new DecimalFormat("###.##");
+        holder.quantity.setText(String.format(" - $" + df.format(curr.quantity ) + ", " + curr.price + " left"));
 
         Date exp = curr.date;
         Date currDate = new Date(System.currentTimeMillis());
@@ -137,6 +143,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
 
     public void wasteGrocery(String title, Date expiration, double quantityWasted) {
         // make call to DB and mark grocery with quantity wasted
+
     }
 
     @Override

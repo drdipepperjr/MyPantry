@@ -100,7 +100,7 @@ public class DBHelper extends SQLiteOpenHelper{
             double priceT = res.getDouble(3);
             String tagT = res.getString(4);
 
-            updateItem(itemNameT,qtyT,expDateT,priceT,tagT);
+            updateItem(itemName, expDate,itemNameT,qtyT,expDateT,priceT,tagT);
         }
 
         else {
@@ -124,14 +124,14 @@ public class DBHelper extends SQLiteOpenHelper{
     /*
         Update an item with matching itemName and expDate
      */
-    public void updateItem (String itemName, double qty, String expDate, double price, String tag) {
+    public void updateItem (String itemName, String expDate, String newItemName, double newQty, String newExpDate, double newPrice, String newTag) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ITEM_NAME, itemName);
-        contentValues.put(QTY, qty);
-        contentValues.put(EXP_DATE, expDate);
-        contentValues.put(PRICE, price);
-        contentValues.put(TAG, tag);
+        contentValues.put(ITEM_NAME, newItemName);
+        contentValues.put(QTY, newQty);
+        contentValues.put(EXP_DATE, newExpDate);
+        contentValues.put(PRICE, newPrice);
+        contentValues.put(TAG, newTag);
 
         try {
             db.update(PANTRY_TABLE_NAME, contentValues, "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
@@ -411,7 +411,7 @@ public class DBHelper extends SQLiteOpenHelper{
     /*
         Get the total amount of money wasted for the current month
      */
-    public double getMoneyWastedThisMonth(String month){
+    public double getMoneyWastedThisMonth(){
         SQLiteDatabase db = this.getReadableDatabase();
         double moneyWasted = 0;
         Cursor res = null;
@@ -437,11 +437,11 @@ public class DBHelper extends SQLiteOpenHelper{
      */
     public HashMap<String,Double>  getMoneyWastedByTag(){
         SQLiteDatabase db = this.getReadableDatabase();
-        HashMap<String,Double> moneyWastedByTag = null;
+        HashMap<String,Double> moneyWastedByTag = new HashMap<String,Double>();
         Cursor res = null;
 
         try {
-            res =  db.rawQuery( "select wasted, tag from usedItems", null );
+            res =  db.rawQuery( "select wasted, tag from usedItems where wasted > 0", null );
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -462,8 +462,6 @@ public class DBHelper extends SQLiteOpenHelper{
 
             res.moveToNext();
         }
-
-
         return moneyWastedByTag;
     }
 
@@ -482,5 +480,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
         return res;
     }
+
+
 
 }

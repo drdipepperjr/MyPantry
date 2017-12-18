@@ -481,6 +481,29 @@ public class DBHelper extends SQLiteOpenHelper{
         return res;
     }
 
+    /*
+    ///////            TESTER CODE FOR DB FUNCTIONS            ////////
+    public void testWastedThisMonth(){
+        double wastedThisMonth = db.getMoneyWastedThisMonth();
+        System.err.println("$" + wastedThisMonth + " dollars wasted this month");
+    }
 
+    public void testMoneyWastedByTag(){
+        HashMap wastedByTag = db.getMoneyWastedByTag();
+        Iterator it = wastedByTag.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.err.println("Money wasted for " + pair.getKey() + " = " + pair.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+    }
 
+    public void testWastedItems(){
+        Cursor res = db.getWastedItems();
+        while(res.moveToNext()){
+            String item = res.getString(res.getColumnIndex("item_name"));
+            System.err.println(item + " has been wasted this month");
+        }
+    }
+    */
 }

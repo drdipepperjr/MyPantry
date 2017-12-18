@@ -69,8 +69,8 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         holder.name.setText(curr.title);
 
 
-        DecimalFormat df = new DecimalFormat("###.##");
-        holder.quantity.setText(String.format(" - $" + df.format(curr.quantity ) + ", " + curr.price + " left"));
+        DecimalFormat df = new DecimalFormat("###.#");
+        holder.quantity.setText(String.format(" - " + df.format(curr.price ) + " left"));
 
         Date exp = curr.date;
         Date currDate = new Date(System.currentTimeMillis());

@@ -36,6 +36,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         public TextView quantity;
         public TextView expiration;
         public com.pchmn.materialchips.ChipView tag;
+        public LinearLayout ll;
         public ViewHolder(View v) {
             super(v);
             main = v;
@@ -43,8 +44,10 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
             this.quantity = v.findViewById(R.id.quantity);
             this.expiration = v.findViewById(R.id.expiration);
             this.tag = v.findViewById(R.id.tag);
+            v.setBackgroundColor(Color.parseColor("#f0f0f0"));
             //Log.v("background:","" + v.getBackground() );
-
+           this.ll = v.findViewById(R.id.linearlayout);
+            //ll.setBackgroundColor(Color.parseColor("#567845"));
         }
     }
 
@@ -69,6 +72,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         holder.name.setText(curr.title);
 
 
+
         DecimalFormat df = new DecimalFormat("###.#");
         holder.quantity.setText(String.format(" - " + df.format(curr.price ) + " left"));
 
@@ -82,8 +86,11 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         String expirationText = "";
         if (daysUntilExpiration < 0) {
             expirationText = "Expired";
+            //holder.ll.setBackgroundColor(Color.parseColor("#567845"));
+            holder.ll.setBackgroundColor(Color.RED);
         } else if (daysUntilExpiration == 0) {
             expirationText = "Expires today";
+            holder.ll.setBackgroundColor(Color.RED);
         } else if (daysUntilExpiration <= 14) {
             expirationText = "Expires in " + Integer.toString(daysUntilExpiration) + " days";
         } else {

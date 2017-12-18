@@ -128,6 +128,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                     mDataset = db.getAllItems();
                                     notifyDataSetChanged();
                                 } else {
+                                    // consume/waste
                                     dialog.dismiss();
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                     builder.setTitle(item.title + " - Quantity Wasted");

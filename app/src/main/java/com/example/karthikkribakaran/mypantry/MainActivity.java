@@ -21,6 +21,12 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         db = new DBHelper(this);
+
+        // create sample values for testing
+        //db.generateSampleItems();
+        //db.generateSampleYear();
+        //db.generateSampleUsedItems();
+
         Fragment menu = new MyGroceries();
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, menu).commit();
     }

@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
 public class DBHelper extends SQLiteOpenHelper{
 
@@ -56,6 +57,10 @@ public class DBHelper extends SQLiteOpenHelper{
         );
 
         // create usedItems table
+        /*
+            usedItems contains only the current month's items
+            table is cleared each month
+         */
         db.execSQL(
                 "create table " + USED_ITEMS_TABLE_NAME + "(item_name text, consumed double, wasted double, tag text)"
         );
@@ -201,7 +206,18 @@ public class DBHelper extends SQLiteOpenHelper{
         return array_list;
     }
 
+    /*
+        get a sample grocery list for testing. line is commented out in MainActivity
+     */
+    public void generateSampleItems(){
 
+        insertItem("potatoes",10,"12/25/2017",5,"vegetables");
+        insertItem("cereal",1,"3/12/2018",3.45,"grains");
+        insertItem("lettuce",2,"12/4/2017",2.30,"vegetables");
+        insertItem("chicken",5,"12/31/2017",10.75,"meat");
+        insertItem("sugar",1,"9/16/2019",5,"baking");
+
+    }
 
 
     //                                                                            //
@@ -215,7 +231,7 @@ public class DBHelper extends SQLiteOpenHelper{
     /*
         Insert a month into the yearly spending table
      */
-    public boolean insertMonth (String month, double spent, double wasted) {
+    public void insertMonth (String month, double spent, double wasted) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("month",month);
@@ -227,13 +243,12 @@ public class DBHelper extends SQLiteOpenHelper{
             e.printStackTrace();
         }
 
-        return true;
     }
 
     /*
         Update the money spent and wasted for a certain month in the yearly spending table
      */
-    public boolean updateMonth (String month, double spent, double wasted) {
+    public void updateMonth (String month, double spent, double wasted) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("spent", spent);
@@ -243,7 +258,6 @@ public class DBHelper extends SQLiteOpenHelper{
         }catch(Exception e){
             e.printStackTrace();
         }
-        return true;
     }
 
     /*
@@ -263,10 +277,14 @@ public class DBHelper extends SQLiteOpenHelper{
     /*
         Delete a month from the yearlySpending table (should only be used if there are already 12 months)
      */
-    public Integer deleteMonth (String month) {
+    public void deleteMonth (String month) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete("yearlySpending",
+        try{
+        db.delete("yearlySpending",
                 "month = ?", new String[]{month});
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -285,7 +303,16 @@ public class DBHelper extends SQLiteOpenHelper{
         return array_list;
     }
 
-
+    /*
+        Generate a sample year for testing. Commented out in MainActivity
+     */
+    public void generateSampleYear(){
+        insertMonth("August",203.14, 30.2);
+        insertMonth("September",245.77, 52.67);
+        insertMonth("October",197.00, 22.50);
+        insertMonth("November", 200.5, 10.78);
+        insertMonth("December",100, 5);
+    }
 
     //                                                                            //
     //                                                                            //
@@ -306,8 +333,8 @@ public class DBHelper extends SQLiteOpenHelper{
             res.moveToFirst();
             String itemNameT = res.getString(0);
             double consumedT = res.getDouble(1);
-            double wastedT = res.getDouble(3);
-            String tagT = res.getString(4);
+            double wastedT = res.getDouble(2);
+            String tagT = res.getString(3);
 
             updateUsedItem(itemNameT,consumedT,wastedT,tagT);
         }
@@ -352,8 +379,8 @@ public class DBHelper extends SQLiteOpenHelper{
      */
     public Cursor getUsedItem(String itemName) {
         SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor res = null;
+
         try {
             res = db.rawQuery("select * from usedItems where item_name = ?", new String[]{itemName});
         } catch(Exception e){
@@ -362,12 +389,91 @@ public class DBHelper extends SQLiteOpenHelper{
         return res;
     }
 
+    public void generateSampleUsedItems(){
+        insertUsedItem("bread",2.5,0,"grain");
+        insertUsedItem("eggs", 3, 1, "meat");
+        insertUsedItem("carrots", 1, 4, "vegetables");
+        insertUsedItem("bananas", 1, 0.75, "fruit");
+        insertUsedItem("strawberries", 3,2.5, "fruit");
+        insertUsedItem("pork", 10, 0, "meat");
+    }
+
+
+
+    //                                                                            //
+    //                                                                            //
+    //                                                                            //
+    //                      HELPER CODE FOR  METRICS                              //
+    //                                                                            //
+    //                                                                            //
+
+
     /*
-     Get a list of all items that have not been totally consumed
+        Get the total amount of money wasted for the current month
+     */
+    public double getMoneyWastedThisMonth(String month){
+        SQLiteDatabase db = this.getReadableDatabase();
+        double moneyWasted = 0;
+        Cursor res = null;
+
+        try {
+            res =  db.rawQuery( "select wasted from usedItems", null );
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        res.moveToFirst();
+        while(res.isAfterLast() == false){
+            moneyWasted += res.getDouble(res.getColumnIndex(WASTED));
+            res.moveToNext();
+        }
+
+        return moneyWasted;
+    }
+
+
+    /*
+        Return the amount of money wasted for each tag as a (tag,wasted) pair
+     */
+    public HashMap<String,Double>  getMoneyWastedByTag(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        HashMap<String,Double> moneyWastedByTag = null;
+        Cursor res = null;
+
+        try {
+            res =  db.rawQuery( "select wasted, tag from usedItems", null );
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        res.moveToFirst();
+        while(res.isAfterLast() == false){
+            String tag = res.getString(res.getColumnIndex("tag"));
+            double wasted = res.getDouble(res.getColumnIndex("wasted"));
+
+            if(moneyWastedByTag.containsKey(tag)){
+                double wastedAccum = moneyWastedByTag.get(tag) + wasted;
+                moneyWastedByTag.put(tag, wastedAccum);
+            }
+
+            else{
+                moneyWastedByTag.put(tag, wasted);
+            }
+
+            res.moveToNext();
+        }
+
+
+        return moneyWastedByTag;
+    }
+
+    /*
+        Get a list of all items that have not been totally consumed
     */
-    public Cursor getWastedItems(String date){
+    public Cursor getWastedItems(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = null;
+
         try {
             res =  db.rawQuery( "select * from usedItems where wasted > 0", null );
         } catch(Exception e){

@@ -133,6 +133,8 @@ public class DBHelper extends SQLiteOpenHelper{
         contentValues.put(PRICE, newPrice);
         contentValues.put(TAG, newTag);
 
+        System.err.println("New values are: " + newItemName + ", " + newExpDate + ", " + newQty + ", " + newPrice + ", " + newTag);
+
         try {
             db.update(PANTRY_TABLE_NAME, contentValues, "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
         } catch(Exception e){
@@ -287,21 +289,6 @@ public class DBHelper extends SQLiteOpenHelper{
         }
     }
 
-
-    public ArrayList<String> getAllMonths() {
-        ArrayList<String> array_list = new ArrayList<String>();
-
-        //hp = new HashMap();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from yearlySpending", null );
-        res.moveToFirst();
-
-        while(res.isAfterLast() == false){
-            array_list.add(res.getString(res.getColumnIndex(ITEM_NAME)));
-            res.moveToNext();
-        }
-        return array_list;
-    }
 
     /*
         Generate a sample year for testing. Commented out in MainActivity
@@ -480,6 +467,39 @@ public class DBHelper extends SQLiteOpenHelper{
 
         return res;
     }
+
+
+    /*
+        Return all the data for months as a Cursor
+     */
+    public Cursor getAllMonths(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = null;
+
+        try {
+            res =  db.rawQuery( "select * from " + YEARLY_SPENDING_TABLE_NAME, null );
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return res;
+    }
+
+    /*
+        Code to get you the first 3 letters of each month (JAN, FEB, etc...)
+     */
+    public String monthAbbrev(String month){
+        String abbrev = "";
+
+        for(int i=0; i<3; i++){
+            abbrev = abbrev + month.charAt(i);
+        }
+
+        return abbrev;
+    }
+
+    
+
 
     /*
     ///////            TESTER CODE FOR DB FUNCTIONS            ////////

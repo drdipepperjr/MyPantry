@@ -3,4 +3,19 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="p1">#f7d7e2</color>
+    <color name="p2">#ffd997</color>
+    <color name="p3">#92ae77</color>
+    <color name="p4">#8f7a77</color>
+    <color name="p5">#f27b66</color>
+    <color name="p6">#ba8995</color>
+    <color name="p7">#ffae43</color>
+    <color name="p8">#ffee69</color>
+    <color name="p9">#f1f7d7</color>
+    <color name="p10">#d7f7ec</color>
+    <color name="p11">#b496b4</color>
+    <color name="p12">#a098a9</color>
+    <color name="p13">#e4e4e4</color>
+    <color name="p14">#ff88f3</color>
+    <color name="p15">#af1919</color>
 </resources>

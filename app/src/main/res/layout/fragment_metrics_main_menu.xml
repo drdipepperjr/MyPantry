@@ -4,28 +4,32 @@
     android:layout_height="match_parent"
     tools:context="com.example.karthikkribakaran.mypantry.MetricsMainMenu">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="metrics main menu fragment" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center_horizontal">
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/monthyPieChart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#fa7921"
+                android:text="Back"
+                android:textColor="#ffffff" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/yearlyChart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/monthyPieChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#fa7921"
-        android:text="Back"
-        android:textColor="#ffffff" />
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/yearlyChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
 
 </FrameLayout>

@@ -23,9 +23,10 @@ public class MainActivity extends AppCompatActivity
         db = new DBHelper(this);
 
         // create sample values for testing
-        //db.generateSampleItems();
-        //db.generateSampleYear();
-        //db.generateSampleUsedItems();
+        db.generateSampleItems();
+        db.generateSampleYear();
+        db.generateSampleUsedItems();
+
         if(savedInstanceState!=null)
             return;
         Fragment menu = new MyGroceries();

@@ -2,6 +2,7 @@ package com.example.karthikkribakaran.mypantry;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -44,16 +45,7 @@ public class MetricsMainMenu extends Fragment {
 
     public DBHelper db;
     private OnFragmentInteractionListener mListener;
-
-    //wasted items lists
-    private List <String> wastedItems;
-    private List <Double> amountWasted;
-    private List <Double> moneyWasted;
-    private List <String> tags;
-
-    //wasted tags Lists
-    private List <String> wastedTags;
-    private ArrayList <Float> moneyWastedByTags;
+    ArrayList<Integer> colors = new ArrayList<>();
 
     public MetricsMainMenu() {
         // Required empty public constructor
@@ -89,11 +81,26 @@ public class MetricsMainMenu extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        colors.add(getResources().getColor(R.color.p1));
+        colors.add(getResources().getColor(R.color.p2));
+        colors.add(getResources().getColor(R.color.p3));
+        colors.add(getResources().getColor(R.color.p4));
+        colors.add(getResources().getColor(R.color.p5));
+        colors.add(getResources().getColor(R.color.p6));
+        colors.add(getResources().getColor(R.color.p7));
+        colors.add(getResources().getColor(R.color.p8));
+        colors.add(getResources().getColor(R.color.p9));
+        colors.add(getResources().getColor(R.color.p10));
+        colors.add(getResources().getColor(R.color.p11));
+        colors.add(getResources().getColor(R.color.p12));
+        colors.add(getResources().getColor(R.color.p13));
+        colors.add(getResources().getColor(R.color.p14));
+        colors.add(getResources().getColor(R.color.p15));
 
-        //testPie();
-        //getPieChart();
-        //getLineChart();
         db=new DBHelper(this.getContext());
+        //testPie();
+        getPieChart();
+        getLineChart();
         Button finished = getView().findViewById(R.id.backButton);
         finished.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,15 +151,23 @@ public class MetricsMainMenu extends Fragment {
         PieDataSet pDataSet =new PieDataSet(pieSlices, "Monthly Wasted Percentages By Tags");
         PieData pData = new PieData(pDataSet);
 
+        pDataSet.setColors(colors);
         monthlypieChart.setData(pData);
         monthlypieChart.invalidate();
     }
 
-
+    //just test function will delete later
     private  void testPie(){
         PieChart monthlypieChart = (PieChart) getView().findViewById(R.id.monthyPieChart);
 
+
         List<PieEntry> pieSlices= new ArrayList<>();
+
+        HashMap<String,Double> tagMp= db.getMoneyWastedByTag();
+        if (tagMp.isEmpty()== true){
+            monthlypieChart.setNoDataText("No Data is Available");
+            return;
+        }
 
         pieSlices.add(new PieEntry(10.5f, "icecream"));
         pieSlices.add(new PieEntry(7, "soda"));
@@ -162,10 +177,12 @@ public class MetricsMainMenu extends Fragment {
         PieDataSet pDataSet =new PieDataSet(pieSlices, "Monthly Wasted Percentages By Tags");
         PieData pData = new PieData(pDataSet);
 
+        pDataSet.setColors(colors);
         monthlypieChart.setData(pData);
         monthlypieChart.invalidate();
 
     }
+
     private void getLineChart(){
         LineChart yearlyLineChart= (LineChart) getView().findViewById(R.id.yearlyChart);
 
@@ -230,6 +247,69 @@ public class MetricsMainMenu extends Fragment {
 
     }
 
+    private void testLineChart(){
+        LineChart yearlyLineChart= (LineChart) getView().findViewById(R.id.yearlyChart);
+
+        //line for wasted
+        List<Entry> lineEntry= new ArrayList<>();
+        //line for total spent
+        List<Entry> lineEntry2= new ArrayList<>();
+        ArrayList<String> monthNames= new ArrayList<>();
+        //get items
+        Cursor months= db.getAllMonths();
+        if (db.getAllMonths()==null){
+            yearlyLineChart.setNoDataText("No Data is Available");
+            return;
+        }
+        int i=0;
+        for (boolean hasItem = months.moveToFirst(); hasItem; hasItem = months.moveToNext()) {
+            String monthName= months.getString(0);
+            monthNames.add(monthName);
+            double dWasted=months.getDouble(2);
+            float wastedValue = (float)dWasted;
+            double dUsed=months.getDouble(2);
+            float spent= wastedValue+ (float)dUsed;
+
+
+            lineEntry.add(new Entry(i,wastedValue));
+            lineEntry2.add(new Entry(i, spent));
+
+            i++;
+        }
+
+        LineDataSet lDataSet= new LineDataSet(lineEntry, "Money Wasted");
+        LineDataSet lDataSet2= new LineDataSet(lineEntry2, "Total Spent");
+
+        List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+        dataSets.add(lDataSet);
+        dataSets.add(lDataSet2);
+
+        LineData lData = new LineData(dataSets);
+
+        //this is how u label xaxis but since we have a dynamic list of months we have to use text view
+        /*final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
+        IAxisValueFormatter formatter = new IAxisValueFormatter() {
+
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return quarters[(int) value];
+            }
+
+            // we don't draw numbers, so no decimal digits needed
+            @Override
+            public int getDecimalDigits() {  return 0; }
+        };
+
+        XAxis xAxis = yearlyLineChart.getXAxis();
+        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
+        xAxis.setValueFormatter(formatter);
+        */
+
+        yearlyLineChart.setData(lData);
+        yearlyLineChart.invalidate();
+
+
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

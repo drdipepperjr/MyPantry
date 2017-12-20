@@ -10,4 +10,22 @@
         android:layout_height="match_parent"
         android:text="metrics main menu fragment" />
 
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/monthyPieChart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/yearlyChart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#fa7921"
+        android:text="Back"
+        android:textColor="#ffffff" />
+
 </FrameLayout>

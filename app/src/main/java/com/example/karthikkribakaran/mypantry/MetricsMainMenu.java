@@ -1,32 +1,37 @@
 package com.example.karthikkribakaran.mypantry;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MetricsMainMenu.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MetricsMainMenu#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MetricsMainMenu extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -80,30 +85,32 @@ public class MetricsMainMenu extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
 
         }
-        db=new DBHelper(this.getContext());
-        getPieChart();
-        //PieChart chart = (PieChart) findViewById(R.id.yearlyChart);
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+
+
+        //getPieChart();
+        //getLineChart();
+        db=new DBHelper(this.getContext());
+        Button finished = getView().findViewById(R.id.backButton);
+        finished.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().popBackStackImmediate();
+            }
+        });
+
+    }
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+    //code that uses db functions to get data for pi chart
     private void updateWastedFoodList(){
         //updates lists by calling DBhelper functions
         //updates tagslists and adds total wasted for each tag
-    }
-
-    private void getPieChart(){
-
-        List<PieEntry> pieSlices= new ArrayList<>();
-        //get items
-        pieSlices.add(new PieEntry(18.5f, "Green"));
-        updateWastedFoodList();
-        for(int i=0; i<wastedTags.size(); i++){
-            pieSlices.add(new PieEntry(moneyWastedByTags.get(i), wastedTags.get(i)));
-        }
-
-        PieDataSet dataSet =new PieDataSet(pieSlices, "Monthly Wasted Percentages By Tags");
-        PieData data = new PieData(dataSet);
-
-        //PieChart monthlypieChart = (PieChart) findViewById(R.id.monthyPieChart);
     }
 
     @Override
@@ -111,7 +118,100 @@ public class MetricsMainMenu extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_metrics_main_menu, container, false);
+
+
     }
+
+    //code that sets up pie chart
+    private void getPieChart(){
+        PieChart monthlypieChart = (PieChart) getView().findViewById(R.id.monthyPieChart);
+
+        List<PieEntry> pieSlices= new ArrayList<>();
+        //get items
+        HashMap<String,Double> tagMp= db.getMoneyWastedByTag();
+        if (tagMp.isEmpty()== true){
+            monthlypieChart.setNoDataText("No Data is Available");
+            return;
+        }
+
+        for (Map.Entry<String, Double> entry : tagMp.entrySet()) {
+            String tag = entry.getKey();
+            double d = entry.getValue();
+            float value = (float)d;
+            pieSlices.add(new PieEntry(value, tag));
+        }
+
+        PieDataSet pDataSet =new PieDataSet(pieSlices, "Monthly Wasted Percentages By Tags");
+        PieData pData = new PieData(pDataSet);
+
+        monthlypieChart.setData(pData);
+        monthlypieChart.invalidate();
+    }
+
+    private void getLineChart(){
+        LineChart yearlyLineChart= (LineChart) getView().findViewById(R.id.yearlyChart);
+
+        //line for wasted
+        List<Entry> lineEntry= new ArrayList<>();
+        //line for total spent
+        List<Entry> lineEntry2= new ArrayList<>();
+        ArrayList<String> monthNames= new ArrayList<>();
+        //get items
+        Cursor months= db.getAllMonths();
+        if (db.getAllMonths()==null){
+            yearlyLineChart.setNoDataText("No Data is Available");
+            return;
+        }
+        int i=0;
+        for (boolean hasItem = months.moveToFirst(); hasItem; hasItem = months.moveToNext()) {
+            String monthName= months.getString(0);
+            monthNames.add(monthName);
+            double dWasted=months.getDouble(2);
+            float wastedValue = (float)dWasted;
+            double dUsed=months.getDouble(2);
+            float spent= wastedValue+ (float)dUsed;
+
+
+            lineEntry.add(new Entry(i,wastedValue));
+            lineEntry2.add(new Entry(i, spent));
+
+            i++;
+        }
+
+        LineDataSet lDataSet= new LineDataSet(lineEntry, "Money Wasted");
+        LineDataSet lDataSet2= new LineDataSet(lineEntry2, "Total Spent");
+
+        List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+        dataSets.add(lDataSet);
+        dataSets.add(lDataSet2);
+
+        LineData lData = new LineData(dataSets);
+
+        //this is how u label xaxis but since we have a dynamic list of months we have to use text view
+        /*final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
+        IAxisValueFormatter formatter = new IAxisValueFormatter() {
+
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return quarters[(int) value];
+            }
+
+            // we don't draw numbers, so no decimal digits needed
+            @Override
+            public int getDecimalDigits() {  return 0; }
+        };
+
+        XAxis xAxis = yearlyLineChart.getXAxis();
+        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
+        xAxis.setValueFormatter(formatter);
+        */
+
+        yearlyLineChart.setData(lData);
+        yearlyLineChart.invalidate();
+
+
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -137,18 +237,4 @@ public class MetricsMainMenu extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

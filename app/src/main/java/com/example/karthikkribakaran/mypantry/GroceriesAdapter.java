@@ -140,7 +140,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                             .inflate(R.layout.waste_dialog, null);
                                     TextView text = layout.findViewById(R.id.total_quantity);
                                     DecimalFormat df = new DecimalFormat("###.#");
-                                    text.setText(" / " + df.format(item.quantity));
+                                    text.setText(" / " + df.format(item.price));
                                     final EditText input = layout.findViewById(R.id.waste_edit);
                                     builder.setView(layout)
                                             .setPositiveButton("Done",

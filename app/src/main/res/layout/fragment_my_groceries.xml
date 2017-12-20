@@ -22,4 +22,17 @@
         android:layout_margin="16dp"
         app:fabSize="normal"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:layout_margin="16dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@android:drawable/ic_menu_preferences"
+        app:backgroundTint="@color/colorCloseChip"
+        app:fabSize="normal" />
+
 </FrameLayout>

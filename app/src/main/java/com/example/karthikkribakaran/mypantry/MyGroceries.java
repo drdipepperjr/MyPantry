@@ -15,8 +15,15 @@ import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.DividerItemDecoration;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -100,6 +107,48 @@ public class MyGroceries extends Fragment {
             }
         });
 
+        FloatingActionButton sortButton = getView().findViewById(R.id.floatingActionButton2);
+        sortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Sort")
+                        .setItems(R.array.sort, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == 0) {
+                                    // date
+                                    dialog.dismiss();
+                                    mAdapter = new GroceriesAdapter(sortByDate(), getActivity(), getActivity().getSupportFragmentManager());
+                                    mRecyclerView.setAdapter(mAdapter);
+
+                                } else if (which == 1) {
+                                    // tag
+                                    dialog.dismiss();
+                                    mAdapter = new GroceriesAdapter(sortByTag(), getActivity(), getActivity().getSupportFragmentManager());
+                                    mRecyclerView.setAdapter(mAdapter);
+
+                                } else if (which == 2){
+                                    // title
+                                    dialog.dismiss();
+                                    mAdapter = new GroceriesAdapter(sortByName(), getActivity(), getActivity().getSupportFragmentManager());
+                                    mRecyclerView.setAdapter(mAdapter);
+                                } else if (which == 3){
+                                    // quantity
+                                    dialog.dismiss();
+                                    mAdapter = new GroceriesAdapter(sortByQuantity(), getActivity(), getActivity().getSupportFragmentManager());
+                                    mRecyclerView.setAdapter(mAdapter);
+                                } else if (which == 4){
+                                    // price
+                                    dialog.dismiss();
+                                    mAdapter = new GroceriesAdapter(sortByPrice(), getActivity(), getActivity().getSupportFragmentManager());
+                                    mRecyclerView.setAdapter(mAdapter);
+                                }
+                            }
+                        });
+                builder.create().show();
+            }
+        });
+
         mRecyclerView = getView().findViewById(R.id.groceriesRecyclerView);
 
         // use this setting to improve performance if you know that changes
@@ -111,7 +160,8 @@ public class MyGroceries extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new GroceriesAdapter(getGroceries(), getActivity(), getActivity().getSupportFragmentManager());
+        //mAdapter = new GroceriesAdapter(getGroceries(), getActivity(), getActivity().getSupportFragmentManager());
+        mAdapter = new GroceriesAdapter(sortByDate(), getActivity(), getActivity().getSupportFragmentManager());
         mRecyclerView.setAdapter(mAdapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
@@ -159,6 +209,79 @@ public class MyGroceries extends Fragment {
     }
 
     private List<GroceryItem> getGroceries() {
-        return db.getAllItems();
+        ArrayList<GroceryItem> db2 = db.getAllItems();
+        Collections.sort(db2, new Comparator<GroceryItem>() {
+            @Override
+            public int compare(GroceryItem groceryItem, GroceryItem t1) {
+                return groceryItem.date.compareTo(t1.date);
+            }
+        });
+        return db2;
+    }
+
+    public List<GroceryItem> sortByName(){
+        ArrayList<GroceryItem> db2 = db.getAllItems();
+        Collections.sort(db2, new Comparator<GroceryItem>() {
+            @Override
+            public int compare(GroceryItem groceryItem, GroceryItem t1) {
+                return groceryItem.title.compareTo(t1.title);
+            }
+        });
+        //mAdapter = new GroceriesAdapter(db2, getActivity(), getActivity().getSupportFragmentManager());
+        //mRecyclerView.setAdapter(mAdapter);
+        return db2;
+
+    }
+
+    public List<GroceryItem> sortByDate(){
+        ArrayList<GroceryItem> db2 = db.getAllItems();
+        Collections.sort(db2, new Comparator<GroceryItem>() {
+            @Override
+            public int compare(GroceryItem groceryItem, GroceryItem t1) {
+                return groceryItem.date.compareTo(t1.date);
+            }
+        });
+        //mAdapter = new GroceriesAdapter(db2, getActivity(), getActivity().getSupportFragmentManager());
+        //mRecyclerView.setAdapter(mAdapter);
+        return db2;
+    }
+
+    public List<GroceryItem> sortByPrice(){
+        ArrayList<GroceryItem> db2 = db.getAllItems();
+        Collections.sort(db2, new Comparator<GroceryItem>() {
+            @Override
+            public int compare(GroceryItem groceryItem, GroceryItem t1) {
+                return groceryItem.price > t1.price? -1: (groceryItem.price < t1.price) ? 1 : 0;
+            }
+        });
+        //mAdapter = new GroceriesAdapter(db2, getActivity(), getActivity().getSupportFragmentManager());
+        //mRecyclerView.setAdapter(mAdapter);
+        return db2;
+    }
+
+    public List<GroceryItem> sortByTag(){
+        ArrayList<GroceryItem> db2 = db.getAllItems();
+        Collections.sort(db2, new Comparator<GroceryItem>() {
+            @Override
+            public int compare(GroceryItem groceryItem, GroceryItem t1) {
+                return groceryItem.tag.compareTo(t1.tag);
+            }
+        });
+        //mAdapter = new GroceriesAdapter(db2, getActivity(), getActivity().getSupportFragmentManager());
+        //mRecyclerView.setAdapter(mAdapter);
+        return db2;
+    }
+
+    public List<GroceryItem> sortByQuantity(){
+        ArrayList<GroceryItem> db2 = db.getAllItems();
+        Collections.sort(db2, new Comparator<GroceryItem>() {
+            @Override
+            public int compare(GroceryItem groceryItem, GroceryItem t1) {
+                return groceryItem.quantity > t1.quantity? -1: (groceryItem.quantity < t1.quantity) ? 1 : 0;
+            }
+        });
+        //mAdapter = new GroceriesAdapter(db2, getActivity(), getActivity().getSupportFragmentManager());
+        //mRecyclerView.setAdapter(mAdapter);
+        return db2;
     }
 }

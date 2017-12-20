@@ -9,6 +9,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -37,13 +41,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class MyGroceries extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private GroceriesAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
 
     public DBHelper db;
@@ -70,21 +69,13 @@ public class MyGroceries extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static MyGroceries newInstance(String param1, String param2) {
         MyGroceries fragment = new MyGroceries();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
+        setHasOptionsMenu(true);
         db = new DBHelper(this.getContext());
 
     }
@@ -98,7 +89,7 @@ public class MyGroceries extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        FloatingActionButton addButton = getView().findViewById(R.id.floatingActionButton);
+        FloatingActionButton addButton = getView().findViewById(R.id.addGroceries);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,7 +98,7 @@ public class MyGroceries extends Fragment {
             }
         });
 
-        FloatingActionButton sortButton = getView().findViewById(R.id.floatingActionButton2);
+        FloatingActionButton sortButton = getView().findViewById(R.id.sort);
         sortButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -283,6 +274,29 @@ public class MyGroceries extends Fragment {
         //mAdapter = new GroceriesAdapter(db2, getActivity(), getActivity().getSupportFragmentManager());
         //mRecyclerView.setAdapter(mAdapter);
         return db2;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Do something that differs the Activity's menu here
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.gen_recipes:
+                List<GroceryItem> selected = mAdapter.getSelected();
+                if (selected.size() < 1) {
+                    Toast.makeText(getActivity(), "No items selected", Toast.LENGTH_LONG).show();
+                    return true;
+                }
+                Fragment recipeGen = RecipeGenerator.newInstance(selected);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(android.R.id.content, recipeGen).addToBackStack(null).commit();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 

@@ -13,12 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Date;
@@ -32,6 +34,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
     private List<GroceryItem> mDataset;
     private Context context;
     private FragmentManager fragmentManager;
+    private List<GroceryItem> selected;
     public DBHelper db;
 
 
@@ -42,6 +45,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         public TextView name;
         public TextView quantity;
         public TextView expiration;
+        public CheckBox checkBox;
         public com.pchmn.materialchips.ChipView tag;
         public LinearLayout ll;
         public ViewHolder(View v) {
@@ -51,10 +55,9 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
             this.quantity = v.findViewById(R.id.quantity);
             this.expiration = v.findViewById(R.id.expiration);
             this.tag = v.findViewById(R.id.tag);
+            this.checkBox = v.findViewById(R.id.checkbox);
             v.setBackgroundColor(Color.parseColor("#f0f0f0"));
-            //Log.v("background:","" + v.getBackground() );
-           this.ll = v.findViewById(R.id.linearlayout);
-            //ll.setBackgroundColor(Color.parseColor("#567845"));
+            this.ll = v.findViewById(R.id.linearlayout);
         }
     }
 
@@ -62,6 +65,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         this.context = context;
         this.mDataset = myDataset;
         this.fragmentManager = fragmentManager;
+        selected = new ArrayList<>();
         db = new DBHelper(context);
     }
 
@@ -96,14 +100,13 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         if (daysUntilExpiration < 0) {
             expirationText = "Expired " + Integer.toString(-daysUntilExpiration) +" days ago";
             //holder.ll.setBackgroundColor(Color.parseColor("#567845"));
-            holder.ll.setBackgroundColor(Color.RED);
+            holder.ll.setBackgroundColor(context.getResources().getColor(R.color.expiredTint));
         } else if (daysUntilExpiration == 0) {
             expirationText = "Expires today";
-            //holder.ll.setBackgroundColor(Color.RED);
-            holder.ll.setBackgroundColor(Color.rgb(255,50,50));
-        } else if (daysUntilExpiration <= 3) {
-            expirationText = "Expires in " + Integer.toString(daysUntilExpiration) + " days";
-            holder.ll.setBackgroundColor(Color.rgb(255,138,138));
+            holder.ll.setBackgroundColor(context.getResources().getColor(R.color.expiredTint));
+        } else if (daysUntilExpiration == 1) {
+            expirationText = "Expires in 1 day";
+            holder.ll.setBackgroundColor(context.getResources().getColor(R.color.expiredTint));
         } else if (daysUntilExpiration <= 14) {
             expirationText = "Expires in " + Integer.toString(daysUntilExpiration) + " days";
         } else {
@@ -113,6 +116,18 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
         holder.expiration.setText(expirationText);
 
         final GroceryItem item = mDataset.get(position);
+
+        final ViewHolder holderFinal = holder;
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holderFinal.checkBox.isChecked()) {
+                    selected.add(item);
+                } else {
+                    selected.remove(item);
+                }
+            }
+        });
 
         holder.main.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,5 +198,9 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
     public void editGrocery(GroceryItem groceryItem) {
         Fragment addGrocery = AddGrocery.newInstance(groceryItem, true);
         fragmentManager.beginTransaction().replace(android.R.id.content, addGrocery).addToBackStack(null).commit();
+    }
+
+    public List<GroceryItem> getSelected() {
+        return this.selected;
     }
 }

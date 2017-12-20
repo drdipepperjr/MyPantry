@@ -3,6 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="expiredTint">#efdada</color>
     <color name="p1">#f7d7e2</color>
     <color name="p2">#ffd997</color>
     <color name="p3">#92ae77</color>

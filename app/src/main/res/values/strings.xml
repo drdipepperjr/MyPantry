@@ -3,6 +3,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="metrics">Metrics</string>
+    <string name="gen_recipes">Generate Recipes</string>
     <string name="quantity_wasted">Quantity Wasted</string>
     <string name="invalid_input">Please enter valid input.</string>
     <string-array name="groceries">
@@ -17,5 +18,8 @@
         <item>Quantity</item>
         <item>Price</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

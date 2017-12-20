@@ -4,11 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <item
-        android:id="@+id/gen_recipes"
-        android:title="@string/gen_recipes"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/metrics_button"
-        android:title="@string/metrics"
+        android:id="@+id/back"
+        android:title="Back"
         app:showAsAction="ifRoom"/>
 </menu>

@@ -13,7 +13,8 @@ public class MainActivity extends AppCompatActivity
         implements MainMenu.OnFragmentInteractionListener,
                     MetricsMainMenu.OnFragmentInteractionListener,
                     MyGroceries.OnFragmentInteractionListener,
-                    AddGrocery.OnFragmentInteractionListener{
+                    AddGrocery.OnFragmentInteractionListener,
+                    RecipeGenerator.OnFragmentInteractionListener {
 
     DBHelper db;
     @Override

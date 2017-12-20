@@ -99,7 +99,11 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
             holder.ll.setBackgroundColor(Color.RED);
         } else if (daysUntilExpiration == 0) {
             expirationText = "Expires today";
-            holder.ll.setBackgroundColor(Color.RED);
+            //holder.ll.setBackgroundColor(Color.RED);
+            holder.ll.setBackgroundColor(Color.rgb(255,50,50));
+        } else if (daysUntilExpiration <= 3) {
+            expirationText = "Expires in " + Integer.toString(daysUntilExpiration) + " days";
+            holder.ll.setBackgroundColor(Color.rgb(255,138,138));
         } else if (daysUntilExpiration <= 14) {
             expirationText = "Expires in " + Integer.toString(daysUntilExpiration) + " days";
         } else {

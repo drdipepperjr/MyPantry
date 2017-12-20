@@ -161,7 +161,7 @@ public class MyGroceries extends Fragment {
 
         // specify an adapter (see also next example)
         //mAdapter = new GroceriesAdapter(getGroceries(), getActivity(), getActivity().getSupportFragmentManager());
-        mAdapter = new GroceriesAdapter(sortByPrice(), getActivity(), getActivity().getSupportFragmentManager());
+        mAdapter = new GroceriesAdapter(sortByDate(), getActivity(), getActivity().getSupportFragmentManager());
         mRecyclerView.setAdapter(mAdapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),

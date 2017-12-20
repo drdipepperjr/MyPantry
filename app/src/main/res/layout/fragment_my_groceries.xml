@@ -31,7 +31,8 @@
         android:layout_weight="1"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/ic_add_white_24px"
+        android:src="@android:drawable/ic_menu_preferences"
+        app:backgroundTint="@color/colorCloseChip"
         app:fabSize="normal" />
 
 </FrameLayout>

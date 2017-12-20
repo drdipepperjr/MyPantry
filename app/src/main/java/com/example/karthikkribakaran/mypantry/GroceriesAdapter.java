@@ -83,7 +83,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
 
 
         DecimalFormat df = new DecimalFormat("###.#");
-        holder.quantity.setText(String.format(" - " + df.format(curr.quantity) + " left"));
+        holder.quantity.setText(String.format(" - " + df.format(curr.price) + " left"));
 
         Date exp = curr.date;
         Date currDate = new Date(System.currentTimeMillis());
@@ -94,7 +94,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
 
         String expirationText = "";
         if (daysUntilExpiration < 0) {
-            expirationText = "Expired";
+            expirationText = "Expired " + Integer.toString(-daysUntilExpiration) +" days ago";
             //holder.ll.setBackgroundColor(Color.parseColor("#567845"));
             holder.ll.setBackgroundColor(Color.RED);
         } else if (daysUntilExpiration == 0) {

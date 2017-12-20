@@ -10,5 +10,12 @@
         <item>Delete</item>
         <item>Consume/Waste</item>
     </string-array>
+    <string-array name="sort">
+        <item>Expiration</item>
+        <item>Tag</item>
+        <item>Name</item>
+        <item>Quantity</item>
+        <item>Price</item>
+    </string-array>
 
 </resources>

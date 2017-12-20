@@ -287,8 +287,8 @@ public class AddGrocery extends Fragment {
 
     private void populateFields() {
         titleView.setText(title);
-        priceView.setText(Double.toString(price));
-        quantityView.setText(Double.toString(quantity));
+        priceView.setText(Double.toString(quantity));
+        quantityView.setText(Double.toString(price));
 
         SimpleDateFormat sdf = new SimpleDateFormat(GroceryItem.MY_FORMAT, Locale.US);
         expirationView.setText(sdf.format(date));

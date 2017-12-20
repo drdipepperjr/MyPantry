@@ -47,7 +47,7 @@ public class RecipeGenerator extends Fragment {
     private RecipeAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private List<Recipe> recipes;
-    private List<GroceryItem> checkedGroceries;
+    private static List<GroceryItem> checkedGroceries;
 
 
     private OnFragmentInteractionListener mListener;
@@ -58,7 +58,7 @@ public class RecipeGenerator extends Fragment {
 
     public static RecipeGenerator newInstance(List<GroceryItem> checked) {
         RecipeGenerator fragment = new RecipeGenerator();
-        fragment.checkedGroceries = checked;
+        checkedGroceries = checked;
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -134,7 +134,6 @@ public class RecipeGenerator extends Fragment {
             try {
                 url = new URL(strings[0]);
 
-                System.out.println("uri" + strings[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
 
                 int responseCode = urlConnection.getResponseCode();
@@ -187,7 +186,6 @@ public class RecipeGenerator extends Fragment {
             for (int i = 0, size = recipeArr.length(); i < size; i++)
             {
                 JSONObject recipe = recipeArr.getJSONObject(i).getJSONObject("recipe");
-                System.out.println(recipe.toString());
                 String label = recipe.getString("label");
                 int calories = recipe.getInt("calories");
                 String url = recipe.getString("url");
@@ -211,7 +209,6 @@ public class RecipeGenerator extends Fragment {
         }
         sb.append("&app_id=4e8afd3f&app_key=65c5e629aa80f4320a5e8d88b300a8d4");
         GetRecipeTask task = new GetRecipeTask();
-        System.out.println("start task");
         task.execute(sb.toString());
     }
 

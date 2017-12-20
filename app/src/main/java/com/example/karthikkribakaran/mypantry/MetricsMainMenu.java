@@ -6,16 +6,21 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -98,7 +103,8 @@ public class MetricsMainMenu extends Fragment {
         colors.add(getResources().getColor(R.color.p15));
 
         db=new DBHelper(this.getContext());
-        //testPie();
+
+        getTotalWasted();
         getPieChart();
         getLineChart();
         Button finished = getView().findViewById(R.id.backButton);
@@ -114,24 +120,27 @@ public class MetricsMainMenu extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    //code that uses db functions to get data for pi chart
-    private void updateWastedFoodList(){
-        //updates lists by calling DBhelper functions
-        //updates tagslists and adds total wasted for each tag
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_metrics_main_menu, container, false);
-
-
+    }
+    //changes textview of monthly wasted
+    private  void getTotalWasted(){
+        double amount=db.getMoneyWastedThisMonth();
+        TextView monthTotalTv = (TextView) getView().findViewById(R.id.monthTotalText);
+        monthTotalTv.setText("$"+String.valueOf(amount));
     }
 
     //code that sets up pie chart
     private void getPieChart(){
         PieChart monthlypieChart = (PieChart) getView().findViewById(R.id.monthyPieChart);
+
+        Description lineChartDescript= new Description();
+        lineChartDescript.setText("Monthly spending waste by tag");
+        monthlypieChart.setDescription(lineChartDescript);
 
         List<PieEntry> pieSlices= new ArrayList<>();
         //get items
@@ -148,7 +157,7 @@ public class MetricsMainMenu extends Fragment {
             pieSlices.add(new PieEntry(value, tag));
         }
 
-        PieDataSet pDataSet =new PieDataSet(pieSlices, "Monthly Wasted Percentages By Tags");
+        PieDataSet pDataSet =new PieDataSet(pieSlices,"Tags");
         PieData pData = new PieData(pDataSet);
 
         pDataSet.setColors(colors);
@@ -186,69 +195,10 @@ public class MetricsMainMenu extends Fragment {
     private void getLineChart(){
         LineChart yearlyLineChart= (LineChart) getView().findViewById(R.id.yearlyChart);
 
-        //line for wasted
-        List<Entry> lineEntry= new ArrayList<>();
-        //line for total spent
-        List<Entry> lineEntry2= new ArrayList<>();
-        ArrayList<String> monthNames= new ArrayList<>();
-        //get items
-        Cursor months= db.getAllMonths();
-        if (db.getAllMonths()==null){
-            yearlyLineChart.setNoDataText("No Data is Available");
-            return;
-        }
-        int i=0;
-        for (boolean hasItem = months.moveToFirst(); hasItem; hasItem = months.moveToNext()) {
-            String monthName= months.getString(0);
-            monthNames.add(monthName);
-            double dWasted=months.getDouble(2);
-            float wastedValue = (float)dWasted;
-            double dUsed=months.getDouble(2);
-            float spent= wastedValue+ (float)dUsed;
-
-
-            lineEntry.add(new Entry(i,wastedValue));
-            lineEntry2.add(new Entry(i, spent));
-
-            i++;
-        }
-
-        LineDataSet lDataSet= new LineDataSet(lineEntry, "Money Wasted");
-        LineDataSet lDataSet2= new LineDataSet(lineEntry2, "Total Spent");
-
-        List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(lDataSet);
-        dataSets.add(lDataSet2);
-
-        LineData lData = new LineData(dataSets);
-
-        //this is how u label xaxis but since we have a dynamic list of months we have to use text view
-        /*final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
-        IAxisValueFormatter formatter = new IAxisValueFormatter() {
-
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return quarters[(int) value];
-            }
-
-            // we don't draw numbers, so no decimal digits needed
-            @Override
-            public int getDecimalDigits() {  return 0; }
-        };
-
-        XAxis xAxis = yearlyLineChart.getXAxis();
-        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
-        xAxis.setValueFormatter(formatter);
-        */
-
-        yearlyLineChart.setData(lData);
-        yearlyLineChart.invalidate();
-
-
-    }
-
-    private void testLineChart(){
-        LineChart yearlyLineChart= (LineChart) getView().findViewById(R.id.yearlyChart);
+        //set description
+        Description lineChartDescript= new Description();
+        lineChartDescript.setText("Yearly spending by Month");
+        yearlyLineChart.setDescription(lineChartDescript);
 
         //line for wasted
         List<Entry> lineEntry= new ArrayList<>();
@@ -280,10 +230,14 @@ public class MetricsMainMenu extends Fragment {
         LineDataSet lDataSet= new LineDataSet(lineEntry, "Money Wasted");
         LineDataSet lDataSet2= new LineDataSet(lineEntry2, "Total Spent");
 
+        //set line color
+        lDataSet.setColor(Color.RED);
+        lDataSet2.setColor(Color.BLUE);
+
+        //combine data
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(lDataSet);
         dataSets.add(lDataSet2);
-
         LineData lData = new LineData(dataSets);
 
         //this is how u label xaxis but since we have a dynamic list of months we have to use text view

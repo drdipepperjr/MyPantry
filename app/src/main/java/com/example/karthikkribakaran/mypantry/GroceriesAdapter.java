@@ -87,7 +87,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
 
 
         DecimalFormat df = new DecimalFormat("###.#");
-        holder.quantity.setText(String.format(" - " + df.format(curr.price) + " left"));
+        holder.quantity.setText(String.format(" - " + df.format(curr.quantity) + " left"));
 
         Date exp = curr.date;
         Date currDate = new Date(System.currentTimeMillis());
@@ -155,7 +155,7 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
                                             .inflate(R.layout.waste_dialog, null);
                                     TextView text = layout.findViewById(R.id.total_quantity);
                                     DecimalFormat df = new DecimalFormat("###.#");
-                                    text.setText(" / " + df.format(item.price));
+                                    text.setText(" / " + df.format(item.quantity));
                                     final EditText input = layout.findViewById(R.id.waste_edit);
                                     builder.setView(layout)
                                             .setPositiveButton("Done",

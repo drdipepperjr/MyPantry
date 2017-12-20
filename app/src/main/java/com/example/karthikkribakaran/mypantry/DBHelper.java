@@ -203,7 +203,7 @@ public class DBHelper extends SQLiteOpenHelper{
                 return null;
             }
 
-            GroceryItem groceryItem = new GroceryItem(title, qty, price, exp, tag);
+            GroceryItem groceryItem = new GroceryItem(title, price, qty, exp, tag);
             array_list.add(groceryItem);
             res.moveToNext();
         }

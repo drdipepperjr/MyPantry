@@ -90,7 +90,7 @@ public class MetricsMainMenu extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-
+        //testPie();
         //getPieChart();
         //getLineChart();
         db=new DBHelper(this.getContext());
@@ -148,6 +148,24 @@ public class MetricsMainMenu extends Fragment {
         monthlypieChart.invalidate();
     }
 
+
+    private  void testPie(){
+        PieChart monthlypieChart = (PieChart) getView().findViewById(R.id.monthyPieChart);
+
+        List<PieEntry> pieSlices= new ArrayList<>();
+
+        pieSlices.add(new PieEntry(10.5f, "icecream"));
+        pieSlices.add(new PieEntry(7, "soda"));
+        pieSlices.add(new PieEntry(7, "vegges"));
+        pieSlices.add(new PieEntry(20, "seafood"));
+
+        PieDataSet pDataSet =new PieDataSet(pieSlices, "Monthly Wasted Percentages By Tags");
+        PieData pData = new PieData(pDataSet);
+
+        monthlypieChart.setData(pData);
+        monthlypieChart.invalidate();
+
+    }
     private void getLineChart(){
         LineChart yearlyLineChart= (LineChart) getView().findViewById(R.id.yearlyChart);
 

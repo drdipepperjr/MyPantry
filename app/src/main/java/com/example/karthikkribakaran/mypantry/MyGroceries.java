@@ -98,7 +98,6 @@ public class MyGroceries extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if(savedInstanceState!=null) return;
         FloatingActionButton addButton = getView().findViewById(R.id.floatingActionButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override

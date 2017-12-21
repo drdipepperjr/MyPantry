@@ -31,6 +31,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -135,6 +136,7 @@ public class MetricsMainMenu extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_metrics_main_menu, container, false);
     }
+    DecimalFormat df = new DecimalFormat("#.##");
 
     //changes textview of monthly wasted
     private  void getTotalWasted(){
@@ -144,7 +146,8 @@ public class MetricsMainMenu extends Fragment {
             monthTotalTv.setText("No Data is Available");
             return;
         }
-        monthTotalTv.setText("$"+String.valueOf(amount));
+
+        monthTotalTv.setText("$"+String.valueOf(df.format(amount)));
     }
 
     //changes textVeiw of top wasted Item Stat
@@ -164,8 +167,7 @@ public class MetricsMainMenu extends Fragment {
             itemName = item.getString(0);
             wastedValue = item.getDouble(1);
         }
-
-        topWastedTv.setText("This month's most wasted item: "+itemName+"\n"+"Total wasted on this item: $"+String.valueOf(wastedValue));
+        topWastedTv.setText("This month's most wasted item: "+itemName+"\n"+"Total wasted on this item: $"+String.valueOf(df.format(wastedValue)));
     }
 
     //we changed least wasted to most expensive and didn't bother changing most of the names
@@ -185,8 +187,7 @@ public class MetricsMainMenu extends Fragment {
             itemName = item.getString(0);
             spentValue = item.getDouble(1);
         }
-
-        mostExpensiveTv.setText("This month's item with highest expenditure: "+itemName+"\n"+"Total spent on this item: $"+String.valueOf(spentValue));
+        mostExpensiveTv.setText("This month's item with highest expenditure: "+itemName+"\n"+"Total spent on this item: $"+String.valueOf(df.format(spentValue)));
     }
 
     //code that sets up pie chart
@@ -257,7 +258,7 @@ public class MetricsMainMenu extends Fragment {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int month = cal.get(Calendar.MONTH);
-        return month+1;
+        return month;
     }
 
     private void getLineChart(){

@@ -333,7 +333,6 @@ public class DBHelper extends SQLiteOpenHelper{
         insertMonth("September",245.77, 52.67);
         insertMonth("October",197.00, 22.50);
         insertMonth("November", 200.5, 10.78);
-        insertMonth("December",100, 5);
     }
 
     //                                                                            //

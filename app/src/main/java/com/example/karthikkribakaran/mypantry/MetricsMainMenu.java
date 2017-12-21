@@ -306,14 +306,11 @@ public class MetricsMainMenu extends Fragment {
         dataSets.add(lDataSet2);
         LineData lData = new LineData(dataSets);
 
-        final String[] monthsList = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
+        final String[] monthsList = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan"};
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                if(value==12){
-                    value=11;
-                }
                 return monthsList[(int) value];
             }
 

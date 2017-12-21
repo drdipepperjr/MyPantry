@@ -257,7 +257,7 @@ public class MetricsMainMenu extends Fragment {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int month = cal.get(Calendar.MONTH);
-        return month-1;
+        return month;
     }
 
     private void getLineChart(){

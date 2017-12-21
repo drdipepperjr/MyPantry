@@ -290,6 +290,7 @@ public class MetricsMainMenu extends Fragment {
             lineEntry.add(new Entry(i,wastedValue));
             lineEntry2.add(new Entry(i, spent));
 
+
         }
 
         LineDataSet lDataSet= new LineDataSet(lineEntry, "Money Wasted");
@@ -310,6 +311,9 @@ public class MetricsMainMenu extends Fragment {
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
+                if(value==12){
+                    value=11;
+                }
                 return monthsList[(int) value];
             }
 

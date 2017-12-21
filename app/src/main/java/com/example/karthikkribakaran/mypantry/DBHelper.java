@@ -6,6 +6,7 @@ package com.example.karthikkribakaran.mypantry;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -37,6 +38,8 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String CONSUMED = "consumed";
     public static final String WASTED = "wasted";
 
+    public static final String PREVIOUS_DATE_TABLE_NAME = "previousDate";
+
     public int NUM_RESULTS = 5;
 
 
@@ -67,6 +70,14 @@ public class DBHelper extends SQLiteOpenHelper{
         db.execSQL(
                 "create table " + USED_ITEMS_TABLE_NAME + "(item_name text, consumed double, wasted double, tag text)"
         );
+
+        /*
+            Create a table for the previous time the app was opened
+            Used for updating the month list
+         */
+        db.execSQL(
+                "create table " + PREVIOUS_DATE_TABLE_NAME + "(month text, year int)"
+        );
     }
 
     @Override
@@ -75,7 +86,6 @@ public class DBHelper extends SQLiteOpenHelper{
         //db.execSQL("DROP TABLE IF EXISTS pantry");
         onCreate(db);
     }
-
 
     //                                                                            //
     //                                                                            //
@@ -135,8 +145,6 @@ public class DBHelper extends SQLiteOpenHelper{
         contentValues.put(PRICE, newPrice);
         contentValues.put(TAG, newTag);
 
-        System.err.println("New values are: " + newItemName + ", " + newExpDate + ", " + newQty + ", " + newPrice + ", " + newTag);
-
         try {
             db.update(PANTRY_TABLE_NAME, contentValues, "item_name = ? and exp_date = ?", new String[]{itemName, expDate});
         } catch(Exception e){
@@ -153,11 +161,11 @@ public class DBHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor res = null;
-         try {
-             res = db.rawQuery("select * from pantry where item_name = ? and exp_date=?", new String[]{itemName, expDate});
-         } catch(Exception e){
+        try {
+            res = db.rawQuery("select * from pantry where item_name = ? and exp_date=?", new String[]{itemName, expDate});
+        } catch(Exception e){
              e.printStackTrace();
-         }
+        }
         return res;
     }
 
@@ -235,6 +243,7 @@ public class DBHelper extends SQLiteOpenHelper{
     /*
         Insert a month into the yearly spending table
         if there are already 12 months, remove one
+        Called in mainactivity
      */
     public void insertMonth (String month, double spent, double wasted) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -253,7 +262,6 @@ public class DBHelper extends SQLiteOpenHelper{
         } catch(Exception e){
             e.printStackTrace();
         }
-
     }
 
     /*
@@ -264,12 +272,12 @@ public class DBHelper extends SQLiteOpenHelper{
 
         Cursor res = getMonth(month);
         res.moveToFirst();
-        double newSpent = res.getDouble(res.getColumnIndex("spent"));
-        double newWasted = res.getDouble(res.getColumnIndex("wasted"));
+        double newSpent = res.getDouble(res.getColumnIndex("spent")) + spent;
+        double newWasted = res.getDouble(res.getColumnIndex("wasted")) + wasted;
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put("spent", spent + newSpent);
-        contentValues.put("wasted", wasted + newWasted);
+        contentValues.put("spent", newSpent);
+        contentValues.put("wasted", newWasted);
         try {
             db.update(YEARLY_SPENDING_TABLE_NAME, contentValues, "month = ?", new String[]{month});
         }catch(Exception e){
@@ -299,6 +307,19 @@ public class DBHelper extends SQLiteOpenHelper{
         try{
         db.delete("yearlySpending",
                 "month = ?", new String[]{month});
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /*
+        Clear the yearlySpending table in preparation for a new year. Called in Mainactivity
+     */
+    public void clearYearlySpending(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        try {
+            db.execSQL("delete from "+ YEARLY_SPENDING_TABLE_NAME);
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -358,6 +379,7 @@ public class DBHelper extends SQLiteOpenHelper{
             }
         }
 
+        // update the money spent/wasted this month
         updateMonth(month_name,consumed,wasted);
     }
 
@@ -368,6 +390,8 @@ public class DBHelper extends SQLiteOpenHelper{
     public void updateUsedItem (String itemName, double consumed, double wasted, String tag) {
 
         SQLiteDatabase db = this.getReadableDatabase();
+
+
         Cursor res = null;
 
         try {
@@ -406,6 +430,21 @@ public class DBHelper extends SQLiteOpenHelper{
         }
         return res;
     }
+
+
+    /*
+        Clear the usedItems table in preparation for a new month
+     */
+    public void clearUsedItems(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        try {
+            db.execSQL("delete from "+ USED_ITEMS_TABLE_NAME);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     public void generateSampleUsedItems(){
         insertUsedItem("bread",2.5,0,"grain");
@@ -557,7 +596,7 @@ public class DBHelper extends SQLiteOpenHelper{
         Cursor res = null;
 
         try {
-            res =  db.rawQuery( "select " +ITEM_NAME + ", " + WASTED + " from " + USED_ITEMS_TABLE_NAME + " order by " + WASTED  + " ASC limit " + NUM_RESULTS, null);
+            res =  db.rawQuery( "select " +ITEM_NAME + ", " + WASTED + " from " + USED_ITEMS_TABLE_NAME + " where wasted !=0 " + " order by " + WASTED  + " ASC limit " + NUM_RESULTS, null);
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -617,29 +656,125 @@ public class DBHelper extends SQLiteOpenHelper{
         }
     }
 
+
+
+    //                                                                            //
+    //                                                                            //
+    //                                                                            //
+    //                      HELPER CODE FOR  DATE                                 //
+    //                                                                            //
+    //                                                                            //
+
+
+
     /*
-    ///////            TESTER CODE FOR DB FUNCTIONS            ////////
-    public void testWastedThisMonth(){
-        double wastedThisMonth = db.getMoneyWastedThisMonth();
-        System.err.println("$" + wastedThisMonth + " dollars wasted this month");
+         Change the date in the previousDate table to match the current date
+      */
+    public void changeDate(String month, int year){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // delete the previous date
+        try {
+            db.execSQL("delete from "+ PREVIOUS_DATE_TABLE_NAME);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+        // insert the new date
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("month", month);
+        contentValues.put("year", year);
+
+        try {
+            db.insert(PREVIOUS_DATE_TABLE_NAME, null, contentValues);
+            System.err.println("new Date is " + month + ", " + year);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
 
-    public void testMoneyWastedByTag(){
-        HashMap wastedByTag = db.getMoneyWastedByTag();
-        Iterator it = wastedByTag.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            System.err.println("Money wasted for " + pair.getKey() + " = " + pair.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
+
+    /*
+        check the current date and see if the month/year is different from the previous date
+     */
+    public void checkDate(){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Get the current month and year
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM");
+        Date date = new Date();
+        String current_month_name = new DateFormatSymbols().getMonths()[Integer.parseInt(dateFormat.format(date))-1];
+        int current_year = now.get(Calendar.YEAR);
+        System.out.println("Current Year is : " + current_year);
+        System.out.println("Current Month is : " +current_month_name);
+
+        // get the previous date
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select * from " + PREVIOUS_DATE_TABLE_NAME, null);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        // literally the first time the app is opened
+        if(res.getCount() == 0){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("month", current_month_name);
+            contentValues.put("year", current_year);
+
+            try {
+                db.insert(PREVIOUS_DATE_TABLE_NAME, null, contentValues);
+                System.err.println("new Date is " + current_month_name + ", " + current_year);
+                insertMonth(current_month_name,0,0);
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+
+            return;
+        }
+
+        // otherwise check the date and see if its different
+        else{
+            res.moveToFirst();
+            String month = res.getString(0);
+            int year = res.getInt(1);
+            System.out.println("Previous date was " + month + ", " + year);
+
+
+            // if the month is different, clear the used items table
+            if(!month.equals(current_month_name)){
+                System.err.println("clearing used items");
+                clearUsedItems();
+                insertMonth(current_month_name,0,0);
+            }
+
+            // if the year is different, delete the yearlySpending table
+            if(year!=current_year){
+                clearYearlySpending();
+            }
+            changeDate(current_month_name,current_year);
         }
     }
 
-    public void testWastedItems(){
-        Cursor res = db.getWastedItems();
-        while(res.moveToNext()){
-            String item = res.getString(res.getColumnIndex("item_name"));
-            System.err.println(item + " has been wasted this month");
+    /*
+        put a sample date into the DB. ONLY CALL IF APP HAS YET TO BE INSTALLED
+     */
+    public void generateSamplePreviousDate(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("month", "November");
+        contentValues.put("year", 2017);
+
+        try {
+            db.insert(PREVIOUS_DATE_TABLE_NAME, null, contentValues);
+        } catch(Exception e){
+            e.printStackTrace();
         }
     }
-    */
+
+
+
 }

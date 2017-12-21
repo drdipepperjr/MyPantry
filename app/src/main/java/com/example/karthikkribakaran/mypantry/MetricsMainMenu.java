@@ -31,10 +31,15 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -104,8 +109,9 @@ public class MetricsMainMenu extends Fragment {
 
         db=new DBHelper(this.getContext());
 
+
         getTotalWasted();
-        getPieChart();
+        //getPieChart();
         getLineChart();
         getTopWastedItem();
         Button finished = getView().findViewById(R.id.backButton);
@@ -128,13 +134,19 @@ public class MetricsMainMenu extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_metrics_main_menu, container, false);
     }
+
     //changes textview of monthly wasted
     private  void getTotalWasted(){
-        double amount=db.getMoneyWastedThisMonth();
         TextView monthTotalTv = (TextView) getView().findViewById(R.id.monthTotalText);
+        double amount=db.getMoneyWastedThisMonth();
+        if (db.getMostWasted()==null){
+            monthTotalTv.setText("No Data is Available");
+            return;
+        }
         monthTotalTv.setText("$"+String.valueOf(amount));
     }
-//changes textVeiw of top wasted Item Stat
+
+    //changes textVeiw of top wasted Item Stat
     private void getTopWastedItem(){
         TextView topWastedTv = (TextView) getView().findViewById(R.id.topWastedItem);
 
@@ -144,7 +156,6 @@ public class MetricsMainMenu extends Fragment {
             return;
         }
 
-        //topWastedTv.setText("hi");
         String itemName=null;
         double wastedValue=0;
         if(item.getCount()!=0) {
@@ -152,11 +163,7 @@ public class MetricsMainMenu extends Fragment {
             itemName = item.getString(0);
             wastedValue = item.getDouble(1);
         }
-        //String itemName= item.getString(0);
-        //double consumedValue= item.getDouble(1);
-        //double wastedValue=item.getDouble(2);
-        //double totalSpentonItem= consumedValue+ wastedValue;
-        //topWastedTv.setText("This month's most wasted item: "+itemName);
+
         topWastedTv.setText("This month's most wasted item: "+itemName+"\n"+"Total wasted on this item: $"+String.valueOf(wastedValue));
     }
 
@@ -218,6 +225,19 @@ public class MetricsMainMenu extends Fragment {
 
     }
 
+    private int getIntMonth(String monthS){
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("MMM", Locale.ENGLISH).parse(monthS);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int month = cal.get(Calendar.MONTH);
+        return month;
+    }
+
     private void getLineChart(){
         LineChart yearlyLineChart= (LineChart) getView().findViewById(R.id.yearlyChart);
 
@@ -230,27 +250,24 @@ public class MetricsMainMenu extends Fragment {
         List<Entry> lineEntry= new ArrayList<>();
         //line for total spent
         List<Entry> lineEntry2= new ArrayList<>();
-        ArrayList<String> monthNames= new ArrayList<>();
         //get items
         Cursor months= db.getAllMonths();
-        if (db.getAllMonths()==null){
+        if (months.getCount()==0){
             yearlyLineChart.setNoDataText("No Data is Available");
             return;
         }
         int i=0;
         for (boolean hasItem = months.moveToFirst(); hasItem; hasItem = months.moveToNext()) {
             String monthName= months.getString(0);
-            monthNames.add(monthName);
             double dWasted=months.getDouble(2);
             float wastedValue = (float)dWasted;
-            double dUsed=months.getDouble(2);
+            double dUsed=months.getDouble(1);
             float spent= wastedValue+ (float)dUsed;
 
-
+            i=getIntMonth(monthName);
             lineEntry.add(new Entry(i,wastedValue));
             lineEntry2.add(new Entry(i, spent));
 
-            i++;
         }
 
         LineDataSet lDataSet= new LineDataSet(lineEntry, "Money Wasted");
@@ -266,24 +283,22 @@ public class MetricsMainMenu extends Fragment {
         dataSets.add(lDataSet2);
         LineData lData = new LineData(dataSets);
 
-        //this is how u label xaxis but since we have a dynamic list of months we have to use text view
-        /*final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
+        final String[] monthsList = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return quarters[(int) value];
+                return monthsList[(int) value];
             }
 
-            // we don't draw numbers, so no decimal digits needed
-            @Override
-            public int getDecimalDigits() {  return 0; }
         };
 
+
         XAxis xAxis = yearlyLineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
-        */
+
 
         yearlyLineChart.setData(lData);
         yearlyLineChart.invalidate();

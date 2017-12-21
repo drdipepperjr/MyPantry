@@ -257,7 +257,7 @@ public class MetricsMainMenu extends Fragment {
             String monthName= months.getString(0);
             double dWasted=months.getDouble(2);
             float wastedValue = (float)dWasted;
-            double dUsed=months.getDouble(2);
+            double dUsed=months.getDouble(1);
             float spent= wastedValue+ (float)dUsed;
 
             i=getIntMonth(monthName);

@@ -109,8 +109,9 @@ public class MetricsMainMenu extends Fragment {
 
         db=new DBHelper(this.getContext());
 
+
         getTotalWasted();
-        getPieChart();
+        //getPieChart();
         getLineChart();
         getTopWastedItem();
         Button finished = getView().findViewById(R.id.backButton);
@@ -136,8 +137,12 @@ public class MetricsMainMenu extends Fragment {
 
     //changes textview of monthly wasted
     private  void getTotalWasted(){
-        double amount=db.getMoneyWastedThisMonth();
         TextView monthTotalTv = (TextView) getView().findViewById(R.id.monthTotalText);
+        double amount=db.getMoneyWastedThisMonth();
+        if (db.getMostWasted()==null){
+            monthTotalTv.setText("No Data is Available");
+            return;
+        }
         monthTotalTv.setText("$"+String.valueOf(amount));
     }
 
@@ -247,12 +252,11 @@ public class MetricsMainMenu extends Fragment {
         List<Entry> lineEntry2= new ArrayList<>();
         //get items
         Cursor months= db.getAllMonths();
-        if (db.getAllMonths()==null){
+        if (months.getCount()==0){
             yearlyLineChart.setNoDataText("No Data is Available");
             return;
         }
         int i=0;
-        int monthCount=0;
         for (boolean hasItem = months.moveToFirst(); hasItem; hasItem = months.moveToNext()) {
             String monthName= months.getString(0);
             double dWasted=months.getDouble(2);

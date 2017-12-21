@@ -257,7 +257,7 @@ public class MetricsMainMenu extends Fragment {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int month = cal.get(Calendar.MONTH);
-        return month;
+        return month+1;
     }
 
     private void getLineChart(){
@@ -306,7 +306,7 @@ public class MetricsMainMenu extends Fragment {
         dataSets.add(lDataSet2);
         LineData lData = new LineData(dataSets);
 
-        final String[] monthsList = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan"};
+        final String[] monthsList = new String[] { "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan"};
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override

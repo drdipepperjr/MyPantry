@@ -27,11 +27,11 @@ public class MainActivity extends AppCompatActivity
         // PLEASE COMMENT OUT BEFORE PUSHING
 
 
-        db.generateSampleItems();
-        db.generateSampleYear();
-        db.generateSampleUsedItems();
+        //db.generateSampleItems();
+        //db.generateSampleYear();
+        //db.generateSampleUsedItems();
 
-        //db.checkDate();
+        db.checkDate();
 
         if(savedInstanceState!=null)
             return;

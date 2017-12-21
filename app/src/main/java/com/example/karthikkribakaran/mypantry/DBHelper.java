@@ -721,13 +721,13 @@ public class DBHelper extends SQLiteOpenHelper{
 
         // literally the first time the app is opened
         if(res.getCount() == 0){
+            System.out.println("No previous date found");
             ContentValues contentValues = new ContentValues();
             contentValues.put("month", current_month_name);
             contentValues.put("year", current_year);
 
             try {
                 db.insert(PREVIOUS_DATE_TABLE_NAME, null, contentValues);
-                System.err.println("new Date is " + current_month_name + ", " + current_year);
                 insertMonth(current_month_name,0,0);
             } catch(Exception e){
                 e.printStackTrace();
@@ -774,7 +774,4 @@ public class DBHelper extends SQLiteOpenHelper{
             e.printStackTrace();
         }
     }
-
-
-
 }

@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity
         //db.generateSampleYear();
         //db.generateSampleUsedItems();
 
-        db.checkDate();
 
 
         if(savedInstanceState!=null)

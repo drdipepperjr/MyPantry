@@ -111,9 +111,10 @@ public class MetricsMainMenu extends Fragment {
 
 
         getTotalWasted();
-        //getPieChart();
+        getPieChart();
         getLineChart();
         getTopWastedItem();
+        getMostExpensiveItem();
         Button finished = getView().findViewById(R.id.backButton);
         finished.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,7 +152,7 @@ public class MetricsMainMenu extends Fragment {
         TextView topWastedTv = (TextView) getView().findViewById(R.id.topWastedItem);
 
         Cursor item= db.getMostWasted();
-        if (db.getMostWasted()==null){
+        if (db.getMostWasted().getCount()==0){
             topWastedTv.setText("No Data is Available");
             return;
         }
@@ -165,6 +166,27 @@ public class MetricsMainMenu extends Fragment {
         }
 
         topWastedTv.setText("This month's most wasted item: "+itemName+"\n"+"Total wasted on this item: $"+String.valueOf(wastedValue));
+    }
+
+    //we changed least wasted to most expensive and didn't bother changing most of the names
+    private void getMostExpensiveItem(){
+        TextView mostExpensiveTv = (TextView) getView().findViewById(R.id.mostSpentItem);
+
+        Cursor item= db.getMostTotalSpent();
+        if (item.getCount()==0){
+            mostExpensiveTv.setText("No Data is Available");
+            return;
+        }
+
+        String itemName=null;
+        double spentValue=0;
+        if(item.getCount()!=0) {
+            item.moveToFirst();
+            itemName = item.getString(0);
+            spentValue = item.getDouble(1);
+        }
+
+        mostExpensiveTv.setText("This month's item with highest expenditure: "+itemName+"\n"+"Total spent on this item: $"+String.valueOf(spentValue));
     }
 
     //code that sets up pie chart

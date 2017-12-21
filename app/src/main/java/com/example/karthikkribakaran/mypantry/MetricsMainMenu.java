@@ -144,20 +144,22 @@ public class MetricsMainMenu extends Fragment {
             return;
         }
 
-        topWastedTv.setText("hi");
-        /*if(item.getCount()!=0) {
+        //topWastedTv.setText("hi");
+        String itemName=null;
+        double wastedValue=0;
+        if(item.getCount()!=0) {
             item.moveToFirst();
-            price= item.getDouble(3);
-
-        item.moveToFirst();
-        String itemName= item.getString(0);
-        double consumedValue= item.getDouble(1);
-        double wastedValue=item.getDouble(2);
-        double totalSpentonItem= consumedValue+ wastedValue;*/
-        //topWastedTv.setText(itemName);
-        //topWastedTv.setText("This month's most wasted item:"+itemName+"\n"+"Total spent on this item: $"+String.valueOf(totalSpentonItem)+"\n" +"$"+String.valueOf(wastedValue)+ "was wasted while $"+ String.valueOf(consumedValue)+"was actually consumed");
-
+            itemName = item.getString(0);
+            wastedValue = item.getDouble(1);
+        }
+        //String itemName= item.getString(0);
+        //double consumedValue= item.getDouble(1);
+        //double wastedValue=item.getDouble(2);
+        //double totalSpentonItem= consumedValue+ wastedValue;
+        //topWastedTv.setText("This month's most wasted item: "+itemName);
+        topWastedTv.setText("This month's most wasted item: "+itemName+"\n"+"Total wasted on this item: $"+String.valueOf(wastedValue));
     }
+
     //code that sets up pie chart
     private void getPieChart(){
         PieChart monthlypieChart = (PieChart) getView().findViewById(R.id.monthyPieChart);

@@ -24,9 +24,14 @@ public class MainActivity extends AppCompatActivity
         db = new DBHelper(this);
 
         // create sample values for testing
+        // PLEASE COMMENT OUT BEFORE PUSHING
+
+
         //db.generateSampleItems();
         //db.generateSampleYear();
         //db.generateSampleUsedItems();
+
+        db.checkDate();
 
 
         if(savedInstanceState!=null)

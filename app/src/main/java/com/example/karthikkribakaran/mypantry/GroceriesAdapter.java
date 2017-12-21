@@ -2,6 +2,7 @@ package com.example.karthikkribakaran.mypantry;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -180,10 +182,21 @@ public class GroceriesAdapter extends RecyclerView.Adapter<GroceriesAdapter.View
     }
 
     public void wasteGrocery(String title, Date expiration, double quantityWasted, double totalQuantity, String tag) {
+        Cursor item= db.getItem(title, sdf.format(expiration));
+        double price=0;
+        if(item.getCount()!=0) {
+            item.moveToFirst();
+            price= item.getDouble(3);
+        }
+
         db.deleteItem(title, sdf.format(expiration));
-        db.insertUsedItem(title, totalQuantity - quantityWasted, quantityWasted, tag);
+        db.insertUsedItem(title, calcParticalCosts(totalQuantity,totalQuantity - quantityWasted,price), calcParticalCosts(totalQuantity, quantityWasted, price), tag);
         mDataset = db.getAllItems();
         notifyDataSetChanged();
+    }
+
+    public double calcParticalCosts(double total, double quantity, double price){
+        return price/total* quantity;
     }
 
     @Override

@@ -366,11 +366,23 @@ public class DBHelper extends SQLiteOpenHelper{
         Update a usedItem with matching itemName
      */
     public void updateUsedItem (String itemName, double consumed, double wasted, String tag) {
-        SQLiteDatabase db = this.getWritableDatabase();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = null;
+
+        try {
+            res = db.rawQuery("select * from usedItems where item_name = ?", new String[]{itemName});
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        res.moveToFirst();
+        double oldConVal=res.getDouble(1);
+        double oldWasteVal=res.getDouble(2);
+
         ContentValues contentValues = new ContentValues();
         contentValues.put(ITEM_NAME, itemName);
-        contentValues.put(CONSUMED, consumed);
-        contentValues.put(WASTED, wasted);
+        contentValues.put(CONSUMED, consumed+oldConVal);
+        contentValues.put(WASTED, wasted+oldWasteVal);
         contentValues.put(TAG, tag);
 
         try {

@@ -107,6 +107,7 @@ public class MetricsMainMenu extends Fragment {
         getTotalWasted();
         getPieChart();
         getLineChart();
+        getTopWastedItem();
         Button finished = getView().findViewById(R.id.backButton);
         finished.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +134,30 @@ public class MetricsMainMenu extends Fragment {
         TextView monthTotalTv = (TextView) getView().findViewById(R.id.monthTotalText);
         monthTotalTv.setText("$"+String.valueOf(amount));
     }
+//changes textVeiw of top wasted Item Stat
+    private void getTopWastedItem(){
+        TextView topWastedTv = (TextView) getView().findViewById(R.id.topWastedItem);
 
+        Cursor item= db.getMostWasted();
+        if (db.getMostWasted()==null){
+            topWastedTv.setText("No Data is Available");
+            return;
+        }
+
+        topWastedTv.setText("hi");
+        /*if(item.getCount()!=0) {
+            item.moveToFirst();
+            price= item.getDouble(3);
+
+        item.moveToFirst();
+        String itemName= item.getString(0);
+        double consumedValue= item.getDouble(1);
+        double wastedValue=item.getDouble(2);
+        double totalSpentonItem= consumedValue+ wastedValue;*/
+        //topWastedTv.setText(itemName);
+        //topWastedTv.setText("This month's most wasted item:"+itemName+"\n"+"Total spent on this item: $"+String.valueOf(totalSpentonItem)+"\n" +"$"+String.valueOf(wastedValue)+ "was wasted while $"+ String.valueOf(consumedValue)+"was actually consumed");
+
+    }
     //code that sets up pie chart
     private void getPieChart(){
         PieChart monthlypieChart = (PieChart) getView().findViewById(R.id.monthyPieChart);
